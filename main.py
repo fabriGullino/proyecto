@@ -289,7 +289,7 @@ def ventanaPacientes():
 
         update_query = "UPDATE pacientes SET Nombre = %s, Papellido = %s, fecha_de_nac = %s, dni = %s, direc = %s, telefono = %s WHERE cod_paciente = %s "
         valores = (nombreValue, papellidoValue, fechaDeNacValue, dniValue, direcValue, telefonoValue, codValue)
-        
+
         if codValue == "" or nombreValue == "" or papellidoValue == "" or fechaDeNacValue == "" or dniValue == "" or direcValue == "" or telefonoValue == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
@@ -351,32 +351,32 @@ def ventanaPacientes():
         if id_to_delete == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else: 
-            valores = (id_to_delete,)
-            delete_query = "DELETE FROM pacientes WHERE cod_paciente = %s"
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
-            if confirmacion:
-                valor = (id_to_delete,)
-                consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
-                cursor.execute(consulta2, valor)
-                resultado = cursor.fetchall()
+            valor = (id_to_delete,)
+            consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchall()
 
-                if resultado:
-                    cursor.execute(delete_query, valores)
-                    conexion.commit()
-                    messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
-                    actualizar_treeview()
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
+                if confirmacion:
+                        valores = (id_to_delete,)
+                        delete_query = "DELETE FROM pacientes WHERE cod_paciente = %s"
+                        cursor.execute(delete_query, valores)
+                        conexion.commit()
+                        messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
+                        actualizar_treeview()
 
-                    textos = [codVar, nombreVar, apellidoVar, fechaVar, dniVar, direcVar, telefonoVar]
+                        textos = [codVar, nombreVar, apellidoVar, fechaVar, dniVar, direcVar, telefonoVar]
 
-                    for i in range(len(textos)):
-                        nuevo_valor = "" 
-                        textos[i].delete(0, tk.END)
-                        textos[i].insert(0, nuevo_valor)
-                
+                        for i in range(len(textos)):
+                            nuevo_valor = "" 
+                            textos[i].delete(0, tk.END)
+                            textos[i].insert(0, nuevo_valor)
+                    
                 else:
-                    messagebox.showerror("Error", "El codigo de paciente ingresado no existe.")
+                    messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
             else:
-                messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
+                messagebox.showerror("Error", "El codigo de paciente ingresado no existe.")
 
 
     def volcarTodo():
@@ -654,43 +654,51 @@ def ventanaMedicos():
         if codValue == "" or nombreValue == "" or papellidoValue == "" or fechaDeNacValue == "" or dniValue == "" or direcValue == "" or telefonoValue == "" or especialidadValue == "" :
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
-            if confirmacion:
+            valor = (codValue,)
+            consulta2 = "SELECT * FROM medicos WHERE cod_medico = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchone()
 
-                valor = (especialidadValue,)
-                consulta1 = "SELECT cod_especialidad FROM especialidades WHERE Especialidad = %s"
-                cursor.execute(consulta1, valor)
-                resultado1 = cursor.fetchone()
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
+                if confirmacion:
+                    valor = (especialidadValue,)
+                    consulta1 = "SELECT cod_especialidad FROM especialidades WHERE Especialidad = %s"
+                    cursor.execute(consulta1, valor)
+                    resultado1 = cursor.fetchone()
 
-                consulta2 = "SELECT * FROM especialidades WHERE cod_especialidad = %s"
-                cursor.execute(consulta2, valor)
-                resultado2 = cursor.fetchone()
+                    consulta2 = "SELECT * FROM especialidades WHERE cod_especialidad = %s"
+                    cursor.execute(consulta2, valor)
+                    resultado2 = cursor.fetchone()
 
-                if resultado1 or resultado2: 
-                    if resultado1:
-                        resultado = resultado1
-                    elif resultado2:
-                        resultado = resultado2
+                    if resultado1 or resultado2: 
+                        if resultado1:
+                            resultado = resultado1
+                        elif resultado2:
+                            resultado = resultado2
 
-                    update_query = "UPDATE medicos SET Nombre = %s, Mapellido = %s, fecha_de_nac = %s, dni = %s, direc = %s, telefono = %s, especialidad = %s WHERE cod_medico = %s "
-                    valores = (nombreValue, papellidoValue, fechaDeNacValue, dniValue, direcValue, telefonoValue, resultado[0], codValue,)
-                    cursor.execute(update_query, valores)
-                    conexion.commit()
-                    messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
+                        update_query = "UPDATE medicos SET Nombre = %s, Mapellido = %s, fecha_de_nac = %s, dni = %s, direc = %s, telefono = %s, especialidad = %s WHERE cod_medico = %s "
+                        valores = (nombreValue, papellidoValue, fechaDeNacValue, dniValue, direcValue, telefonoValue, resultado[0], codValue,)
+                        cursor.execute(update_query, valores)
+                        conexion.commit()
+                        messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
 
-                    actualizar_treeview()
+                        actualizar_treeview()
 
-                    textos = [codVar, nombreVar, apellidoVar, fechaVar, dniVar, direcVar, telefonoVar, especialidadVar]
+                        textos = [codVar, nombreVar, apellidoVar, fechaVar, dniVar, direcVar, telefonoVar, especialidadVar]
 
-                    for i in range(len(textos)):
-                            nuevo_valor = "" 
-                            textos[i].delete(0, tk.END)
-                            textos[i].insert(0, nuevo_valor)
-                
+                        for i in range(len(textos)):
+                                nuevo_valor = "" 
+                                textos[i].delete(0, tk.END)
+                                textos[i].insert(0, nuevo_valor)
+                    
+                    else:
+                        messagebox.showerror("Error", "La especialidad ingresada no existe.")
                 else:
-                    messagebox.showerror("Error", "La especialidad ingresada no existe.")
+                    messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
             else:
-                messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
+                messagebox.showerror("Error", "El codigo de medico ingresado no existe.")
+
 
 
 
@@ -736,16 +744,16 @@ def ventanaMedicos():
         if id_to_delete == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else: 
-            valores = (id_to_delete,)
-            delete_query = "DELETE FROM medicos WHERE cod_medico = %s"
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
-            if confirmacion:
-                valor = (id_to_delete,)
-                consulta2 = "SELECT * FROM medicos WHERE cod_medico = %s"
-                cursor.execute(consulta2, valor)
-                resultado = cursor.fetchall()
+            valor = (id_to_delete,)
+            consulta2 = "SELECT * FROM medicos WHERE cod_medico = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchall()
 
-                if resultado:
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
+                if confirmacion:
+                    valores = (id_to_delete,)
+                    delete_query = "DELETE FROM medicos WHERE cod_medico = %s"
                     cursor.execute(delete_query, valores)
                     conexion.commit()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
@@ -757,12 +765,11 @@ def ventanaMedicos():
                         nuevo_valor = "" 
                         textos[i].delete(0, tk.END)
                         textos[i].insert(0, nuevo_valor)
-                
-                else:
-                    messagebox.showerror("Error", "El codigo de medico ingresado no existe.")
 
+                else:
+                    messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
             else:
-                messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
+                messagebox.showerror("Error", "El codigo de medico ingresado no existe.")
 
 
     def volcarTodo():
@@ -1044,45 +1051,52 @@ def ventanaHistoriasClinicas():
         if codValue == "" or pacienteValue == "" or fechaValue == "" or histValue == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
-            if confirmacion:
+            valor = (codValue,)
+            consulta2 = "SELECT * FROM historia_clinica WHERE cod_historia = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchone()
 
-                valor = (pacienteValue,)
-                consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
-                cursor.execute(consulta1, valor)
-                resultado1 = cursor.fetchone()
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
+                if confirmacion:
 
-                consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
-                cursor.execute(consulta2, valor)
-                resultado2 = cursor.fetchone()
+                    valor = (pacienteValue,)
+                    consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
+                    cursor.execute(consulta1, valor)
+                    resultado1 = cursor.fetchone()
 
-                if resultado1 or resultado2: 
-                    if resultado1:
-                        resultado = resultado1
-                    elif resultado2:
-                        resultado = resultado2
+                    consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
+                    cursor.execute(consulta2, valor)
+                    resultado2 = cursor.fetchone()
 
-                    update_query = "UPDATE historia_clinica SET descripcion = %s, paciente = %s, fecha = %s WHERE cod_historia = %s"
-                    valores = (histValue, resultado[0], fechaValue, codValue,)
-                    cursor.execute(update_query, valores)
-                    conexion.commit()
-                    messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
-                    actualizar_treeview()
+                    if resultado1 or resultado2: 
+                        if resultado1:
+                            resultado = resultado1
+                        elif resultado2:
+                            resultado = resultado2
 
-                    textCamp = [cod_hist_var, paciente_var, fecha_var]
+                        update_query = "UPDATE historia_clinica SET descripcion = %s, paciente = %s, fecha = %s WHERE cod_historia = %s"
+                        valores = (histValue, resultado[0], fechaValue, codValue,)
+                        cursor.execute(update_query, valores)
+                        conexion.commit()
+                        messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
+                        actualizar_treeview()
 
-                    for i in range(len(textCamp)):
-                        nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
-                        textCamp[i].delete(0, tk.END)  # Borra cualquier texto existente
-                        textCamp[i].insert(0, nuevo_valor)
-                        hist_var.delete('1.0', 'end')
-                        hist_var.insert('1.0', nuevo_valor)
+                        textCamp = [cod_hist_var, paciente_var, fecha_var]
 
+                        for i in range(len(textCamp)):
+                            nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
+                            textCamp[i].delete(0, tk.END)  # Borra cualquier texto existente
+                            textCamp[i].insert(0, nuevo_valor)
+                            hist_var.delete('1.0', 'end')
+                            hist_var.insert('1.0', nuevo_valor)
+
+                    else:
+                        messagebox.showerror("Error", "El paciente ingresado no existe.")
                 else:
-                    messagebox.showerror("Error", "El paciente ingresado no existe.")
+                    messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
             else:
-                messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
-
+                messagebox.showerror("Error", "El codigo de historia clinica ingresado no existe.")
 
 
 
@@ -1129,16 +1143,16 @@ def ventanaHistoriasClinicas():
         if id_to_delete == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else: 
-            valores = (id_to_delete,)
-            delete_query = "DELETE FROM historia_clinica WHERE cod_historia = %s"
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
-            if confirmacion:
-                valor = (id_to_delete,)
-                consulta2 = "SELECT * FROM historia_clinica WHERE cod_historia = %s"
-                cursor.execute(consulta2, valor)
-                resultado = cursor.fetchall()
+            valor = (id_to_delete,)
+            consulta2 = "SELECT * FROM historia_clinica WHERE cod_historia = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchall()
                 
-                if resultado:
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
+                if confirmacion:
+                    valores = (id_to_delete,)
+                    delete_query = "DELETE FROM historia_clinica WHERE cod_historia = %s"
                     cursor.execute(delete_query, valores)
                     conexion.commit()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
@@ -1154,9 +1168,9 @@ def ventanaHistoriasClinicas():
                         hist_var.insert('1.0', nuevo_valor)
                         
                 else:
-                    messagebox.showerror("Error", "El codigo de historia clinica ingresado no existe.")
+                    messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
             else:
-                messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
+                messagebox.showerror("Error", "El codigo de historia clinica ingresado no existe.")
 
     # Función para volcar datos desde la base de datos al Treeview
     def volcarTodo():
@@ -1523,30 +1537,23 @@ def ventanaTurnos():
             result = cursor.fetchall()
 
             if result:
-                valores = (id_to_delete,)
-                delete_query = "DELETE FROM turnos WHERE cod_turno = %s"
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
                 if confirmacion:
-                    valor = (id_to_delete,)
-                    consulta2 = "SELECT * FROM turnos WHERE cod_turno = %s"
-                    cursor.execute(consulta2, valor)
-                    resultado = cursor.fetchall()
+                    valores = (id_to_delete,)
+                    delete_query = "DELETE FROM turnos WHERE cod_turno = %s"
+                    cursor.execute(delete_query, valores)
+                    conexion.commit()
+                    messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
+                    actualizar_treeview()
 
-                    if resultado:
-                        cursor.execute(delete_query, valores)
-                        conexion.commit()
-                        messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
-                        actualizar_treeview()
+                    textos = [codVar, fechaVar, horaVar, pacienteVar, medicoVar]
 
-                        textos = [codVar, fechaVar, horaVar, pacienteVar, medicoVar]
+                    for i in range(len(textos)):
+                        nuevo_valor = "" 
+                        textos[i].delete(0, tk.END)
+                        textos[i].insert(0, nuevo_valor)
+                        
 
-                        for i in range(len(textos)):
-                            nuevo_valor = "" 
-                            textos[i].delete(0, tk.END)
-                            textos[i].insert(0, nuevo_valor)
-                    
-                    else:
-                        messagebox.showerror("Error", "El codigo de paciente o medico ingresado no existe.")
                 else:
                     messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
             else:
@@ -2570,16 +2577,16 @@ def ventanaInternaciones():
         if id_to_delete == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else: 
-            valores = (id_to_delete,)
-            delete_query = "DELETE FROM internaciones WHERE cod_internacion = %s"
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
-            if confirmacion:
-                valor = (id_to_delete,)
-                consulta2 = "SELECT * FROM internaciones WHERE cod_internacion = %s"
-                cursor.execute(consulta2, valor)
-                resultado = cursor.fetchall()
+            valor = (id_to_delete,)
+            consulta2 = "SELECT * FROM internaciones WHERE cod_internacion = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchall()
 
-                if resultado:
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
+                if confirmacion:
+                    valores = (id_to_delete,)
+                    delete_query = "DELETE FROM internaciones WHERE cod_internacion = %s"
                     cursor.execute(delete_query, valores)
                     conexion.commit()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
@@ -2591,11 +2598,11 @@ def ventanaInternaciones():
                         nuevo_valor = "" 
                         textos[i].delete(0, tk.END)
                         textos[i].insert(0, nuevo_valor)
-                
+                    
                 else:
-                    messagebox.showerror("Error", "El codigo de internacion ingresado no existe.")
+                    messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
             else:
-                messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
+                messagebox.showerror("Error", "El codigo de internacion ingresado no existe.")
 
 
     def volcarTodo():
@@ -3811,16 +3818,16 @@ def ventanaEspecialidades():
         if id_to_delete == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else: 
-            valores = (id_to_delete,)
-            delete_query = "DELETE FROM especialidades WHERE cod_especialidad = %s"
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
-            if confirmacion:
-                valor = (id_to_delete,)
-                consulta2 = "SELECT * FROM especialidades WHERE cod_especialidad = %s"
-                cursor.execute(consulta2, valor)
-                resultado = cursor.fetchall()
+            valor = (id_to_delete,)
+            consulta2 = "SELECT * FROM especialidades WHERE cod_especialidad = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchall()
 
-                if resultado:
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
+                if confirmacion:
+                    valores = (id_to_delete,)
+                    delete_query = "DELETE FROM especialidades WHERE cod_especialidad = %s"
                     cursor.execute(delete_query, valores)
                     conexion.commit()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
@@ -3833,10 +3840,10 @@ def ventanaEspecialidades():
                         textos[i].delete(0, tk.END)
                         textos[i].insert(0, nuevo_valor)
                 else:
-                    messagebox.showerror("Error", "El codigo de especialidad ingresado no existe.")
-
+                    messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
             else:
-                messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
+                messagebox.showerror("Error", "El codigo de especialidad ingresado no existe.")
+
 
 
     def volcarTodo():
@@ -4076,30 +4083,38 @@ def ventanaPatologias():
         if codValue == "" or nombreValue == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
-            if confirmacion:
-                valor = (codValue,)
-                consulta2 = "SELECT * FROM patologias WHERE cod_patologia = %s"
-                cursor.execute(consulta2, valor)
-                resultado = cursor.fetchall()
+            valor = (codValue,)
+            consulta2 = "SELECT * FROM patologias WHERE cod_patologia = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchone()
 
-                if resultado:
-                    cursor.execute(update_query, valores)
-                    conexion.commit()
-                    messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
-                    actualizar_treeview()
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
+                if confirmacion:
+                    valor = (codValue,)
+                    consulta2 = "SELECT * FROM patologias WHERE cod_patologia = %s"
+                    cursor.execute(consulta2, valor)
+                    resultado = cursor.fetchall()
 
-                    textos = [codVar, nombreVar]
+                    if resultado:
+                        cursor.execute(update_query, valores)
+                        conexion.commit()
+                        messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
+                        actualizar_treeview()
 
-                    for i in range(len(textos)):
-                        nuevo_valor = "" 
-                        textos[i].delete(0, tk.END)
-                        textos[i].insert(0, nuevo_valor)
+                        textos = [codVar, nombreVar]
+
+                        for i in range(len(textos)):
+                            nuevo_valor = "" 
+                            textos[i].delete(0, tk.END)
+                            textos[i].insert(0, nuevo_valor)
+                    else:
+                        messagebox.showerror("Error", "El codigo de especialidad ingresado no existe.")
                 else:
-                    messagebox.showerror("Error", "El codigo de especialidad ingresado no existe.")
-            else:
-                messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
+                    messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
 
+            else:
+                messagebox.showerror("Error", "El codigo de patologia ingresado no existe.")
 
     def cargarRegistro():
         nombreValue = str(nombreVar.get()).strip()
@@ -4129,16 +4144,16 @@ def ventanaPatologias():
         if id_to_delete == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else: 
-            valores = (id_to_delete,)
-            delete_query = "DELETE FROM patologias WHERE cod_patologia = %s"
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
-            if confirmacion:
-                valor = (id_to_delete,)
-                consulta2 = "SELECT * FROM patologias WHERE cod_patologia = %s"
-                cursor.execute(consulta2, valor)
-                resultado = cursor.fetchall()
+            valor = (id_to_delete,)
+            consulta2 = "SELECT * FROM patologias WHERE cod_patologia = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchall()
 
-                if resultado:
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
+                if confirmacion:
+                    valores = (id_to_delete,)
+                    delete_query = "DELETE FROM patologias WHERE cod_patologia = %s"
                     cursor.execute(delete_query, valores)
                     conexion.commit()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
@@ -4151,9 +4166,9 @@ def ventanaPatologias():
                         textos[i].delete(0, tk.END)
                         textos[i].insert(0, nuevo_valor)
                 else:
-                    messagebox.showerro("Error", "El codigo de patologia ingresado no existe.")
+                    messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
             else:
-                messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
+                messagebox.showerror("Error", "El codigo de patologia ingresado no existe.")
 
 
     def volcarTodo():
@@ -4394,31 +4409,39 @@ def ventanaUsuarios():
         if codUserValue == "" or userValue == "" or passValue == "" :
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
-            if confirmacion:
-                valor = (codUserValue,)
-                consulta2 = "SELECT * FROM usuarios WHERE cod_usuario = %s"
-                cursor.execute(consulta2, valor)
-                resultado = cursor.fetchall()
+            valor = (codUserValue,)
+            consulta2 = "SELECT * FROM turnos WHERE cod_turno = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchone()
 
-                if resultado:
-                    cursor.execute(update_query, valores)
-                    conexion.commit()
-                    messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
-                    actualizar_treeview()
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
+                if confirmacion:
+                    valor = (codUserValue,)
+                    consulta2 = "SELECT * FROM usuarios WHERE cod_usuario = %s"
+                    cursor.execute(consulta2, valor)
+                    resultado = cursor.fetchall()
 
-                    textCamp = [cod_user_var, user_var, pass_var]
+                    if resultado:
+                        cursor.execute(update_query, valores)
+                        conexion.commit()
+                        messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
+                        actualizar_treeview()
 
-                    for i in range(len(textCamp)):
-                        nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
-                        textCamp[i].delete(0, tk.END)
-                        textCamp[i].insert(0, nuevo_valor)
+                        textCamp = [cod_user_var, user_var, pass_var]
+
+                        for i in range(len(textCamp)):
+                            nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
+                            textCamp[i].delete(0, tk.END)
+                            textCamp[i].insert(0, nuevo_valor)
+                    else:
+                        messagebox.showerror("Error", "El codigo de usuario ingresado no existe.")
+
                 else:
-                    messagebox.showerror("Error", "El codigo de usuario ingresado no existe.")
+                    messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
 
             else:
-                messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
-
+                messagebox.showerror("Error", "El codigo de usuario ingresado no existe.")
 
     def cargarRegistro():
         userValue = str(user_var.get()).strip()
@@ -4451,16 +4474,16 @@ def ventanaUsuarios():
         if id_to_delete == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else: 
-            valores = (id_to_delete,)
-            delete_query = "DELETE FROM usuarios WHERE cod_usuario = %s"
-            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
-            if confirmacion:
-                valor = (id_to_delete,)
-                consulta2 = "SELECT * FROM usuarios WHERE cod_usuario = %s"
-                cursor.execute(consulta2, valor)
-                resultado = cursor.fetchall()
+            valor = (id_to_delete,)
+            consulta2 = "SELECT * FROM usuarios WHERE cod_usuario = %s"
+            cursor.execute(consulta2, valor)
+            resultado = cursor.fetchall()
 
-                if resultado:
+            if resultado:
+                confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
+                if confirmacion:
+                    valores = (id_to_delete,)
+                    delete_query = "DELETE FROM usuarios WHERE cod_usuario = %s"
                     cursor.execute(delete_query, valores)
                     conexion.commit()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
@@ -4473,9 +4496,9 @@ def ventanaUsuarios():
                         textCamp[i].delete(0, tk.END)
                         textCamp[i].insert(0, nuevo_valor)
                 else:
-                    messagebox.showerror("Error", "El codigo de usuarios ingresado no existe.")
+                    messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
             else:
-                messagebox.showinfo("Cancelacion", "El registro no sera eliminado.")
+                messagebox.showerror("Error", "El codigo de usuarios ingresado no existe.")
 
     # Función para volcar datos desde la base de datos al Treeview
     def volcarTodo():
