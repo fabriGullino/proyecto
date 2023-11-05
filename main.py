@@ -1860,8 +1860,24 @@ def ventanaAsignarT():
         registros = cursor.fetchall()
         cursor.close()
 
-        for a in pacienteTree.get_children():
-            pacienteTree.delete(a)
+        pacienteLabel.config(text = "")
+        medicoLabel.config(text = "")
+        fechaLabel.config(text = "")
+        horaLabel.config(text = "")
+        for item in pacienteTree.get_children():
+            pacienteTree.delete(item)
+        for item in medicoTree.get_children():
+            medicoTree.delete(item)
+        for item in especialidadTree.get_children():
+            especialidadTree.delete(item)
+        for item in añoTree.get_children():
+            añoTree.delete(item)
+        for item in mesTree.get_children():
+            mesTree.delete(item)
+        for item in diaTree.get_children():
+            diaTree.delete(item)
+        for item in horaTree.get_children():
+            horaTree.delete(item)
 
         for registro in registros:
             pacienteTree.insert("", "end", values=registro)
@@ -2072,6 +2088,17 @@ def ventanaAsignarT():
         for a in añoTree.get_children():
             añoTree.delete(a)
 
+        for item in mesTree.get_children():
+            mesTree.delete(item)
+
+        for item in diaTree.get_children():
+            diaTree.delete(item)
+
+        for item in horaTree.get_children():
+            horaTree.delete(item)
+
+        horaLabel.config(text = "")
+
         for i in range(2023, 2051):
             añoTree.insert("", "end", values=(i,))
 
@@ -2119,8 +2146,13 @@ def ventanaAsignarT():
         global mes
         item_seleccionado = mesTree.focus()
 
-        for a in diaTree.get_children():
-            diaTree.delete(a)
+        for item in diaTree.get_children():
+            diaTree.delete(item)
+            
+        for item in horaTree.get_children():
+            horaTree.delete(item)
+
+        horaLabel.config(text = "")
 
         if item_seleccionado:
             valores = mesTree.item(item_seleccionado, "values")
@@ -2229,6 +2261,8 @@ def ventanaAsignarT():
         for a in mesTree.get_children():
             mesTree.delete(a)
 
+
+
         months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
 
         for i in range(len(months)):
@@ -2294,10 +2328,9 @@ def ventanaAsignarT():
         # Eliminar todos los elementos previos en el Treeview
         for item in horaTree.get_children():
             horaTree.delete(item)
-        
-        for item in horaTree.get_children():
-            horaTree.delete(item)
 
+        horaLabel.config(text = "")
+        
         horas = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
                 "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
                 "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"]
@@ -2972,8 +3005,34 @@ def ventanaAsignarI():
         registros = cursor.fetchall()
         cursor.close()
 
-        for a in pacienteTree.get_children():
-            pacienteTree.delete(a)
+        pacienteLabel.config(text = "")
+        medicoLabel.config(text = "")
+        fechaLabel.config(text = "")
+        patologiaLabel.config(text = "")
+        horaLabel.config(text = "")
+        pisoLabel.config(text = "")
+        habitacionLabel.config(text = "")
+        camaLabel.config(text = "")
+        for item in pacienteTree.get_children():
+            pacienteTree.delete(item)
+        for item in medicoTree.get_children():
+            medicoTree.delete(item)
+        for item in patologiaTree.get_children():
+            patologiaTree.delete(item)
+        for item in añoTree.get_children():
+            añoTree.delete(item)
+        for item in mesTree.get_children():
+            mesTree.delete(item)
+        for item in diaTree.get_children():
+            diaTree.delete(item)
+        for item in horaTree.get_children():
+            horaTree.delete(item)
+        for item in pisoTree.get_children():
+            pisoTree.delete(item)
+        for item in habitacionTree.get_children():
+            habitacionTree.delete(item)
+        for item in camaTree.get_children():
+            camaTree.delete(item)
 
         for registro in registros:
             pacienteTree.insert("", "end", values=registro)
@@ -3211,8 +3270,22 @@ def ventanaAsignarI():
         for i in range(2023, 2051):
             añoTree.insert("", "end", values=(i,))
 
-        for a in mesTree.get_children():
-            mesTree.delete(a)
+        horaLabel.config(text = "")
+        pisoLabel.config(text = "")
+        habitacionLabel.config(text = "")
+        camaLabel.config(text = "")
+        for item in mesTree.get_children():
+            mesTree.delete(item)
+        for item in diaTree.get_children():
+            diaTree.delete(item)
+        for item in horaTree.get_children():
+            horaTree.delete(item)
+        for item in pisoTree.get_children():
+            pisoTree.delete(item)
+        for item in habitacionTree.get_children():
+            habitacionTree.delete(item)
+        for item in camaTree.get_children():
+            camaTree.delete(item)
 
         months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
 
@@ -3255,8 +3328,20 @@ def ventanaAsignarI():
         global mes
         item_seleccionado = mesTree.focus()
 
-        for a in diaTree.get_children():
-            diaTree.delete(a)
+        horaLabel.config(text = "")
+        pisoLabel.config(text = "")
+        habitacionLabel.config(text = "")
+        camaLabel.config(text = "")
+        for item in diaTree.get_children():
+            diaTree.delete(item)
+        for item in horaTree.get_children():
+            horaTree.delete(item)
+        for item in pisoTree.get_children():
+            pisoTree.delete(item)
+        for item in habitacionTree.get_children():
+            habitacionTree.delete(item)
+        for item in camaTree.get_children():
+            camaTree.delete(item)
 
         if item_seleccionado:
             valores = mesTree.item(item_seleccionado, "values")
@@ -3413,31 +3498,23 @@ def ventanaAsignarI():
                 dia = valores[0]
                 fechaLabel.config(text=f"{dia}/{mes}/{año}")
             
-        for a in añoTree.get_children():
-            añoTree.delete(a)
 
-        for i in range(2023, 2051):
-            añoTree.insert("", "end", values=(i,))
-
-        for a in mesTree.get_children():
-            mesTree.delete(a)
-
-        months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-
-        for i in range(len(months)):
-            mesTree.insert("", "end", values=months[i])
-
-        # Eliminar todos los elementos previos en el Treeview
+        horaLabel.config(text = "")
+        pisoLabel.config(text = "")
+        habitacionLabel.config(text = "")
+        camaLabel.config(text = "")
         for item in horaTree.get_children():
             horaTree.delete(item)
-        
-        for item in horaTree.get_children():
-            horaTree.delete(item)
+        for item in pisoTree.get_children():
+            pisoTree.delete(item)
+        for item in habitacionTree.get_children():
+            habitacionTree.delete(item)
+        for item in camaTree.get_children():
+            camaTree.delete(item)
 
         horas = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
                 "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
                 "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"]
-
 
         for i in range(len(horas)):
             horaTree.insert("", "end", values=horas[i])
@@ -3484,8 +3561,18 @@ def ventanaAsignarI():
             if valores:
                 hora = valores[0]
                 horaLabel.config(text=f"{hora}")
-                for a in pisoTree.get_children():
-                    pisoTree.delete(a)
+
+                pisoLabel.config(text = "")
+                habitacionLabel.config(text = "")
+                camaLabel.config(text = "")
+
+                for item in pisoTree.get_children():
+                    pisoTree.delete(item)
+                for item in habitacionTree.get_children():
+                    habitacionTree.delete(item)
+                for item in camaTree.get_children():
+                    camaTree.delete(item)
+
 
                 for i in range(1,3):
                     pisoTree.insert("", "end", values=i)
@@ -3534,6 +3621,13 @@ def ventanaAsignarI():
             if valores:
                 piso = valores[0]
                 pisoLabel.config(text=f"{piso}")
+
+                habitacionLabel.config(text = "")
+                camaLabel.config(text = "")
+                for item in habitacionTree.get_children():
+                    habitacionTree.delete(item)
+                for item in camaTree.get_children():
+                    camaTree.delete(item)
 
             if piso == "1":
                 for a in habitacionTree.get_children():
@@ -3587,8 +3681,10 @@ def ventanaAsignarI():
             if valores:
                     habitacion = valores[0]
                     habitacionLabel.config(text=f"{habitacion}")
-                    for a in camaTree.get_children():
-                        camaTree.delete(a)
+
+                    camaLabel.config(text = "")
+                    for item in camaTree.get_children():
+                        camaTree.delete(item)
 
                     pacienteValue = pacienteLabel.cget("text")
                     medicoValue = medicoLabel.cget("text")
@@ -4496,7 +4592,7 @@ def ventanaUsuarios():
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
             valor = (codUserValue,)
-            consulta2 = "SELECT * FROM turnos WHERE cod_turno = %s"
+            consulta2 = "SELECT * FROM usuarios WHERE cod_usuario = %s"
             cursor = conexion.cursor()
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchone()
