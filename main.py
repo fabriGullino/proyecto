@@ -15,7 +15,7 @@ try:
         database="base_de_prueba"
     )
 
-    cursor = conexion.cursor()
+
 
 except Exception as e:
     messagebox.showerror("Error", f"Ocurrió un error al conectarse a la base de datos.")
@@ -34,11 +34,15 @@ def ventanaAcceso():
     def acceso():
         usuario = entry_user.get()
         contraseña = entry_pass.get()
-        
-        consulta = "SELECT * FROM usuarios WHERE nom_usuario LIKE %s AND contraseña LIKE %s"
+
+        cursor = conexion.cursor()
+
+        consulta = "SELECT * FROM usuarios WHERE nom_usuario = %s AND contraseña = %s"
         valores = (usuario, contraseña)
         cursor.execute(consulta, valores)
-        resultado = cursor.fetchone()
+        resultado = cursor.fetchall()
+        
+        cursor.close()
 
         if resultado:
             messagebox.showinfo("Acceso exitoso", "Inicio de sesión exitoso")
@@ -272,13 +276,17 @@ def ventanaPacientes():
 
     def actualizar_treeview():
 
+        cursor = conexion.cursor()
+
         if tree.get_children():
             tree.delete(*tree.get_children())
-        cursor = conexion.cursor()
         select_query = "SELECT * FROM pacientes" 
         cursor.execute(select_query)
         for row in cursor.fetchall():
             tree.insert("", "end", values=row)
+
+        cursor.close()
+
 
     def modificarRegistro():
         codValue = codVar.get()
@@ -295,16 +303,19 @@ def ventanaPacientes():
         if codValue == "" or nombreValue == "" or papellidoValue == "" or fechaDeNacValue == "" or dniValue == "" or direcValue == "" or telefonoValue == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
+            cursor = conexion.cursor()
             valor = (codValue,)
             consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchall()
-
+            cursor.close()
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
                 if confirmacion:
+                    cursor = conexion.cursor()
                     cursor.execute(update_query, valores)
                     conexion.commit()
+                    cursor.close()
                     messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
                     actualizar_treeview()
 
@@ -335,9 +346,11 @@ def ventanaPacientes():
         if nombreValue == "" or papellidoValue == "" or fechaDeNacValue == "" or dniValue == "" or direcValue == "" or telefonoValue == "" :
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
+            cursor = conexion.cursor()
             cursor.execute(insert_query, valores)
             messagebox.showinfo("Éxito", "El registro ha sido cargado exitosamente.")
             conexion.commit()
+            cursor.close()
             actualizar_treeview()
 
             textos = [codVar, nombreVar, apellidoVar, fechaVar, dniVar, direcVar, telefonoVar]
@@ -353,21 +366,23 @@ def ventanaPacientes():
         if id_to_delete == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else: 
+            cursor = conexion.cursor()
             valor = (id_to_delete,)
             consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchall()
-
+            cursor.close()
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
                 if confirmacion:
+                        cursor = conexion.cursor()
                         valores = (id_to_delete,)
                         delete_query = "DELETE FROM pacientes WHERE cod_paciente = %s"
                         cursor.execute(delete_query, valores)
                         conexion.commit()
                         messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
                         actualizar_treeview()
-
+                        cursor.close()
                         textos = [codVar, nombreVar, apellidoVar, fechaVar, dniVar, direcVar, telefonoVar]
 
                         for i in range(len(textos)):
@@ -382,10 +397,11 @@ def ventanaPacientes():
 
 
     def volcarTodo():
+        cursor = conexion.cursor()
         consulta = "SELECT * FROM pacientes"
         cursor.execute(consulta)
-
         registros = cursor.fetchall()
+        cursor.close()
 
         for a in tree.get_children():
             tree.delete(a)
@@ -427,10 +443,10 @@ def ventanaPacientes():
             consulta = "SELECT * FROM pacientes WHERE telefono LIKE %s"
         elif comboValue != "Codigo de Paciente" or comboValue != "Nombre" or comboValue != "Apellido" or comboValue != "Fecha de Nacimiento" or comboValue != "Dni" or comboValue != "Direccion" or comboValue != "Telefono":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-            
+        cursor = conexion.cursor()
         cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
-
+        cursor.close()
         for a in tree.get_children():
             tree.delete(a)
 
@@ -620,14 +636,14 @@ def ventanaMedicos():
         button.pack(side="left")
 
     def actualizar_treeview():
+        cursor = conexion.cursor()
         if tree.get_children():
             tree.delete(*tree.get_children())
-        cursor = conexion.cursor()
         select_query = "SELECT * FROM medicos" 
         cursor.execute(select_query)
         for row in cursor.fetchall():
             tree.insert("", "end", values=row)
-
+        cursor.close()
 
 
     def modificarRegistro():
@@ -644,23 +660,26 @@ def ventanaMedicos():
         if codValue == "" or nombreValue == "" or papellidoValue == "" or fechaDeNacValue == "" or dniValue == "" or direcValue == "" or telefonoValue == "" or especialidadValue == "" :
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
+            cursor = conexion.cursor()
             valor = (codValue,)
             consulta2 = "SELECT * FROM medicos WHERE cod_medico = %s"
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchone()
-
+            cursor.close()
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
                 if confirmacion:
+                    cursor = conexion.cursor()
                     valor = (especialidadValue,)
                     consulta1 = "SELECT cod_especialidad FROM especialidades WHERE Especialidad = %s"
                     cursor.execute(consulta1, valor)
                     resultado1 = cursor.fetchone()
-
+                    cursor.close()
+                    cursor = conexion.cursor()
                     consulta2 = "SELECT * FROM especialidades WHERE cod_especialidad = %s"
                     cursor.execute(consulta2, valor)
                     resultado2 = cursor.fetchone()
-
+                    cursor.close()
                     if resultado1 or resultado2: 
                         if resultado1:
                             resultado = resultado1
@@ -669,8 +688,10 @@ def ventanaMedicos():
 
                         update_query = "UPDATE medicos SET Nombre = %s, Mapellido = %s, fecha_de_nac = %s, dni = %s, direc = %s, telefono = %s, especialidad = %s WHERE cod_medico = %s "
                         valores = (nombreValue, papellidoValue, fechaDeNacValue, dniValue, direcValue, telefonoValue, resultado[0], codValue,)
+                        cursor = conexion.cursor()
                         cursor.execute(update_query, valores)
                         conexion.commit()
+                        cursor.close()
                         messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
 
                         actualizar_treeview()
@@ -705,19 +726,21 @@ def ventanaMedicos():
         if nombreValue == "" or mapellidoValue == "" or fechaDeNacValue == "" or dniValue == "" or direcValue == "" or telefonoValue == "" or especialidadValue == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
+            cursor = conexion.cursor()
             valor = (especialidadValue,)
             consulta2 = "SELECT cod_especialidad FROM especialidades WHERE Especialidad = %s"
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchone()
-
+            cursor.close()
             if resultado:
                 insert_query = "INSERT INTO medicos (Nombre, Mapellido, fecha_de_nac, dni, direc, telefono, especialidad) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                 valores = (nombreValue, mapellidoValue, fechaDeNacValue, dniValue, direcValue, telefonoValue, resultado[0])
+                cursor = conexion.cursor()
                 cursor.execute(insert_query, valores)
                 conexion.commit()
                 messagebox.showinfo("Éxito", "El registro ha sido cargado exitosamente.")
                 actualizar_treeview()
-
+                cursor.close()
                 textos = [codVar, nombreVar, apellidoVar, fechaVar, dniVar, direcVar, telefonoVar, especialidadVar]
 
                 for i in range(len(textos)):
@@ -734,18 +757,21 @@ def ventanaMedicos():
         if id_to_delete == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else: 
+            cursor = conexion.cursor()
             valor = (id_to_delete,)
             consulta2 = "SELECT * FROM medicos WHERE cod_medico = %s"
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchall()
-
+            cursor.close()
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
                 if confirmacion:
                     valores = (id_to_delete,)
                     delete_query = "DELETE FROM medicos WHERE cod_medico = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(delete_query, valores)
                     conexion.commit()
+                    cursor.close()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
                     actualizar_treeview()
 
@@ -764,9 +790,12 @@ def ventanaMedicos():
 
     def volcarTodo():
         consulta = "SELECT * FROM medicos"
-        cursor.execute(consulta)
 
+        cursor = conexion.cursor()
+        cursor.execute(consulta)
         registros = cursor.fetchall()
+
+        cursor.close()
 
         for a in tree.get_children():
             tree.delete(a)
@@ -810,10 +839,12 @@ def ventanaMedicos():
             consulta = "SELECT * FROM medicos WHERE especialidad LIKE %s"
         elif comboValue != "Nombre" or comboValue != "Apellido" or comboValue != "Fecha de Nacimiento" or comboValue != "Dni" or comboValue != "Direccion" or comboValue != "Telefono" or comboValue != "Especialidad":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-
+        
+        cursor = conexion.cursor()
         cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
-            
+        cursor.close()
+
         for a in tree.get_children():
             tree.delete(a)
 
@@ -905,11 +936,12 @@ def ventanaMedicos():
 
     especialidadVar = ttk.Combobox(textbox_frame, width=20, font=roboto)
     especialidadVar.grid(row=2, column=7, padx=2, pady=5)
-
+    
+    cursor = conexion.cursor()
     sqlEsp = "SELECT Especialidad FROM especialidades"
     cursor.execute(sqlEsp)
     resultados = cursor.fetchall()
-
+    cursor.close()
 
     for i in resultados:
         especialidadVar["values"] = (*especialidadVar["values"], i)
@@ -1012,15 +1044,14 @@ def ventanaHistoriasClinicas():
         button.pack(side="left")
 
     def actualizar_treeview():
-        # Verificar si hay elementos en el Treeview antes de intentar eliminarlos
+        cursor = conexion.cursor()
         if tree.get_children():
             tree.delete(*tree.get_children())  # Eliminar todas las filas excepto la raíz
-        cursor = conexion.cursor()
         select_query = "SELECT * FROM historia_clinica" 
         cursor.execute(select_query)
         for row in cursor.fetchall():
             tree.insert("", "end", values=row)
-
+        cursor.close()
 
     def modificarRegistro():
         codValue = cod_hist_var.get()
@@ -1031,23 +1062,29 @@ def ventanaHistoriasClinicas():
         if codValue == "" or pacienteValue == "" or fechaValue == "" or histValue == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
+            cursor = conexion.cursor()
             valor = (codValue,)
             consulta2 = "SELECT * FROM historia_clinica WHERE cod_historia = %s"
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchone()
+            cursor.close()
 
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
                 if confirmacion:
 
+                    cursor = conexion.cursor()
                     valor = (pacienteValue,)
                     consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
                     cursor.execute(consulta1, valor)
                     resultado1 = cursor.fetchone()
+                    cursor.close()
 
+                    cursor = conexion.cursor()
                     consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
                     cursor.execute(consulta2, valor)
                     resultado2 = cursor.fetchone()
+                    cursor.close()
 
                     if resultado1 or resultado2: 
                         if resultado1:
@@ -1057,8 +1094,10 @@ def ventanaHistoriasClinicas():
 
                         update_query = "UPDATE historia_clinica SET descripcion = %s, paciente = %s, fecha = %s WHERE cod_historia = %s"
                         valores = (histValue, resultado[0], fechaValue, codValue,)
+                        cursor = conexion.cursor()
                         cursor.execute(update_query, valores)
                         conexion.commit()
+                        cursor.close()
                         messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
                         actualizar_treeview()
 
@@ -1089,17 +1128,21 @@ def ventanaHistoriasClinicas():
         if histValue == "" or pacienteValue == "" or fechaValue == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
+            cursor = conexion.cursor()
             valor = (pacienteValue,)
             consulta2 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchone()
+            cursor.close()
 
             if resultado:
                 insert_query = "INSERT INTO historia_clinica (descripcion, paciente, fecha) VALUES (%s, %s, %s)"
                 valores = (histValue, resultado[0], fechaValue,)
+                cursor = conexion.cursor()
                 cursor.execute(insert_query, valores)
                 messagebox.showinfo("Éxito", "El registro ha sido cargado exitosamente.")
                 conexion.commit()
+                cursor.close()
                 actualizar_treeview()
 
                 textCamp = [cod_hist_var, paciente_var, fecha_var]
@@ -1123,18 +1166,22 @@ def ventanaHistoriasClinicas():
         if id_to_delete == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else: 
+            cursor = conexion.cursor()
             valor = (id_to_delete,)
             consulta2 = "SELECT * FROM historia_clinica WHERE cod_historia = %s"
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchall()
-                
+            cursor.close()
+
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
                 if confirmacion:
                     valores = (id_to_delete,)
                     delete_query = "DELETE FROM historia_clinica WHERE cod_historia = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(delete_query, valores)
                     conexion.commit()
+                    cursor.close()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
                     actualizar_treeview()
 
@@ -1155,12 +1202,12 @@ def ventanaHistoriasClinicas():
     # Función para volcar datos desde la base de datos al Treeview
     def volcarTodo():
         consulta = "SELECT * FROM historia_clinica"
+
+        cursor = conexion.cursor()
         cursor.execute(consulta)
-            
-            # Obtener todos los registros
         registros = cursor.fetchall()
-            
-            # Limpiar el Treeview
+        cursor.close()
+
         for a in tree.get_children():
             tree.delete(a)
             
@@ -1206,8 +1253,10 @@ def ventanaHistoriasClinicas():
         elif comboValue != "Cod Paciente" or comboValue != "Fecha":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
 
+        cursor = conexion.cursor()
         cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
+        cursor.close()
 
         for a in tree.get_children():
             tree.delete(a)
@@ -1291,8 +1340,10 @@ def ventanaHistoriasClinicas():
     paciente_var.grid(row=4, column=0, padx=5, pady=5)
 
     sqlPac = "SELECT dni FROM pacientes"
+    cursor = conexion.cursor()
     cursor.execute(sqlPac)
     resultados = cursor.fetchall()
+    cursor.close()
 
     for i in resultados:
         paciente_var["values"] = (*paciente_var["values"], i)
@@ -1414,13 +1465,14 @@ def ventanaTurnos():
 
     def actualizar_treeview():
 
+        cursor = conexion.cursor()
         if tree.get_children():
             tree.delete(*tree.get_children())
-        cursor = conexion.cursor()
         select_query = "SELECT * FROM turnos" 
         cursor.execute(select_query)
         for row in cursor.fetchall():
             tree.insert("", "end", values=row)
+        cursor.close()
 
     def modificarRegistro():
         codValue = codVar.get()
@@ -1434,27 +1486,37 @@ def ventanaTurnos():
         else:
             valor = (codValue,)
             consulta2 = "SELECT * FROM turnos WHERE cod_turno = %s"
+            cursor = conexion.cursor()
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchone()
-
+            cursor.close()
+            
             if resultado:
                     valor1 = (pacienteValue,)
                     consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(consulta1, valor1)
                     resultado1 = cursor.fetchone()
+                    cursor.close()
 
                     consulta5 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(consulta5, valor1)
                     resultado2 = cursor.fetchone()
+                    cursor.close()
 
                     valor2 = (medicoValue,)
                     consulta3 = "SELECT cod_medico FROM medicos WHERE dni = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(consulta3, valor2)
                     resultado3 = cursor.fetchone()
+                    cursor.close()
 
                     consulta4 = "SELECT * FROM medicos WHERE cod_medico = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(consulta4, valor2)
                     resultado4 = cursor.fetchone()
+                    cursor.close()
 
                     paciente = None
                     medico = None
@@ -1476,8 +1538,12 @@ def ventanaTurnos():
                             if confirmacion:
                                 update_query = "UPDATE turnos SET fecha = %s, hora = %s, paciente = %s, medico = %s WHERE cod_turno = %s "
                                 valores = (fechaValue, horaValue, paciente[0], medico[0], codValue)
+
+                                cursor = conexion.cursor()
                                 cursor.execute(update_query, valores)
                                 conexion.commit()
+                                cursor.close()
+
                                 messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
                                 actualizar_treeview()
 
@@ -1502,16 +1568,21 @@ def ventanaTurnos():
         else: 
             valor = (id_to_delete,)
             sql = "SELECT * FROM turnos WHERE cod_turno = %s"
+
+            cursor = conexion.cursor()
             cursor.execute(sql, valor)
             result = cursor.fetchall()
+            cursor.close()
 
             if result:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
                 if confirmacion:
                     valores = (id_to_delete,)
                     delete_query = "DELETE FROM turnos WHERE cod_turno = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(delete_query, valores)
                     conexion.commit()
+                    cursor.close()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
                     actualizar_treeview()
 
@@ -1531,9 +1602,11 @@ def ventanaTurnos():
 
     def volcarTodo():
         consulta = "SELECT * FROM turnos"
-        cursor.execute(consulta)
 
+        cursor = conexion.cursor()
+        cursor.execute(consulta)
         registros = cursor.fetchall()
+        cursor.close()
 
         for a in tree.get_children():
             tree.delete(a)
@@ -1571,8 +1644,10 @@ def ventanaTurnos():
         elif comboValue != "Fecha" or comboValue != "Hora" or comboValue != "Paciente" or comboValue != "Medico":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
 
+        cursor = conexion.cursor()
         cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
+        cursor.close()
  
         for a in tree.get_children():
             tree.delete(a)
@@ -1653,8 +1728,11 @@ def ventanaTurnos():
     pacienteVar.grid(row=2, column=3, padx=2, pady=5)
 
     sqlPac = "SELECT dni FROM pacientes"
+
+    cursor = conexion.cursor()
     cursor.execute(sqlPac)
     resultados = cursor.fetchall()
+    cursor.close()
 
     for i in resultados:
         pacienteVar["values"] = (*pacienteVar["values"], i)
@@ -1664,9 +1742,12 @@ def ventanaTurnos():
     medicoVar.grid(row=2, column=4, padx=2, pady=5)
 
     sqlMed = "SELECT dni FROM medicos"
+
+    cursor = conexion.cursor()
     cursor.execute(sqlMed)
     resultados = cursor.fetchall()
-
+    cursor.close()
+    
     for i in resultados:
         medicoVar["values"] = (*medicoVar["values"], i)
 
@@ -1773,8 +1854,11 @@ def ventanaAsignarT():
         pacienteValue = askstring("Ingresar Datos", "Por favor, ingrese un numero de dni sin puntos ni espacios.",parent=root)
         valores = (pacienteValue,)
         consulta = "SELECT cod_paciente, Nombre, Papellido, dni FROM pacientes WHERE dni = %s"
+
+        cursor = conexion.cursor()
         cursor.execute(consulta, valores)
         registros = cursor.fetchall()
+        cursor.close()
 
         for a in pacienteTree.get_children():
             pacienteTree.delete(a)
@@ -1823,8 +1907,10 @@ def ventanaAsignarT():
             pacienteTree.delete(a)
 
         consulta = "SELECT * FROM especialidades"
+        cursor = conexion.cursor()
         cursor.execute(consulta)
         registros = cursor.fetchall()
+        cursor.close()
 
         for a in especialidadTree.get_children():
             especialidadTree.delete(a)
@@ -1878,9 +1964,10 @@ def ventanaAsignarT():
 
         valores = (especialidad,) 
         consulta = "SELECT cod_medico, Nombre, Mapellido FROM medicos WHERE especialidad = %s"
+        cursor = conexion.cursor()
         cursor.execute(consulta, valores)
         registros = cursor.fetchall()
-
+        cursor.close()
         for a in medicoTree.get_children():
             medicoTree.delete(a)
 
@@ -2220,8 +2307,11 @@ def ventanaAsignarT():
 
         for i in range(len(horas)):
             sql = f"SELECT fecha, hora, medico FROM turnos WHERE medico = '{medicoCod}' AND fecha = '{turnoFec}' AND hora = '{horas[i]}'"
+            
+            cursor = conexion.cursor() 
             cursor.execute(sql)
             resultado =cursor.fetchall()
+            cursor.close()
 
             if resultado:
                 color = "red"  # Rojo para coincidencias
@@ -2315,17 +2405,20 @@ def ventanaAsignarT():
 
         try:
             sql1 = f"SELECT * FROM turnos WHERE paciente = '{pacienteCode}' AND medico = '{medicoCode}' AND fecha = '{fecha}' AND hora = '{hora}'"
+            cursor = conexion.cursor()
             cursor.execute(sql1)
             resultados = cursor.fetchall()
-
+            cursor.close()
             if resultados:
                 messagebox.showinfo("Turno ocupado", "El turno seleccionado se encuentra ocupado.")
             else:
                 valores = (fecha, hora, pacienteCode, medicoCode,)
                 sql2 = "INSERT INTO turnos (fecha, hora, paciente, medico) VALUES (%s,%s,%s,%s)"
+                cursor = conexion.cursor()                
                 cursor.execute(sql2, valores)
-                messagebox.showinfo("Éxito", "El turno ha sido cargado exitosamente.")
                 conexion.commit()
+                cursor.close()
+                messagebox.showinfo("Éxito", "El turno ha sido cargado exitosamente.")
                 pacienteLabel.config(text = "")
                 medicoLabel.config(text = "")
                 fechaLabel.config(text = "")
@@ -2427,13 +2520,14 @@ def ventanaInternaciones():
 
     def actualizar_treeview():
 
+        cursor = conexion.cursor()
         if tree.get_children():
             tree.delete(*tree.get_children())
-        cursor = conexion.cursor()
         select_query = "SELECT * FROM internaciones" 
         cursor.execute(select_query)
         for row in cursor.fetchall():
             tree.insert("", "end", values=row)
+        cursor.close()
 
     def modificarRegistro():
         codValue = codVar.get()
@@ -2453,36 +2547,45 @@ def ventanaInternaciones():
         else:
             valor = (codValue,)
             consulta2 = "SELECT * FROM internaciones WHERE cod_internacion = %s"
+            cursor = conexion.cursor()
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchone()
+            cursor.close()
 
             if resultado:
+                    cursor = conexion.cursor()
                     valor1 = (pacienteValue,)
                     consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
                     cursor.execute(consulta1, valor1)
                     resultado1 = cursor.fetchone()
-
+                    cursor.close()
+                    cursor = conexion.cursor()
                     consulta5 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
                     cursor.execute(consulta5, valor1)
                     resultado2 = cursor.fetchone()
-
+                    cursor.close()
+                    cursor = conexion.cursor()
                     valor2 = (medicoValue,)
                     consulta3 = "SELECT cod_medico FROM medicos WHERE dni = %s"
                     cursor.execute(consulta3, valor2)
                     resultado3 = cursor.fetchone()
-
+                    cursor.close()
+                    cursor = conexion.cursor()
                     consulta4 = "SELECT * FROM medicos WHERE cod_medico = %s"
                     cursor.execute(consulta4, valor2)
                     resultado4 = cursor.fetchone()
-
+                    cursor.close()
+                    cursor = conexion.cursor()
                     valor3 = (patoValue,)
                     consulta6 = "SELECT cod_patologia FROM patologias WHERE Patologia = %s"
                     cursor.execute(consulta6, valor3)
                     resultado5 = cursor.fetchone()
-
+                    cursor.close()
+                    cursor = conexion.cursor()
                     consulta7 = "SELECT * FROM patologias WHERE cod_patologia = %s"
                     cursor.execute(consulta7, valor3)
                     resultado6 = cursor.fetchone()
+                    cursor.close()
 
                     paciente = None
                     medico = None
@@ -2510,8 +2613,10 @@ def ventanaInternaciones():
                         confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
                         if confirmacion:
                             update_query = f"UPDATE internaciones SET fecha = '{fechaValue}', hora = '{horaValue}', paciente = '{paciente[0]}', medico = '{medico[0]}', patologia = '{patologia[0]}', piso = '{pisoValue}', num_hab = '{numHabValue}', num_cama = '{numCamaValue}', alta = '{altaValue}' WHERE cod_internacion = '{codValue}'"        
+                            cursor = conexion.cursor()
                             cursor.execute(update_query)
                             conexion.commit()
+                            cursor.close()
                             messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
                             actualizar_treeview()
 
@@ -2536,16 +2641,20 @@ def ventanaInternaciones():
         else: 
             valor = (id_to_delete,)
             consulta2 = "SELECT * FROM internaciones WHERE cod_internacion = %s"
+            cursor = conexion.cursor()
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchall()
+            cursor.close()
 
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
                 if confirmacion:
                     valores = (id_to_delete,)
                     delete_query = "DELETE FROM internaciones WHERE cod_internacion = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(delete_query, valores)
                     conexion.commit()
+                    cursor.close()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
                     actualizar_treeview()
 
@@ -2564,10 +2673,10 @@ def ventanaInternaciones():
 
     def volcarTodo():
         consulta = "SELECT * FROM internaciones"
+        cursor = conexion.cursor()
         cursor.execute(consulta)
-
         registros = cursor.fetchall()
-
+        cursor.close()
         for a in tree.get_children():
             tree.delete(a)
             
@@ -2609,8 +2718,10 @@ def ventanaInternaciones():
         elif comboValue != "Fecha" or comboValue != "Hora" or comboValue != "Paciente" or comboValue != "Medico" or comboValue != "Patologia" or comboValue != "Alta":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
 
+        cursor = conexion.cursor()
         cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
+        cursor.close()
 
         for a in tree.get_children():
             tree.delete(a)   
@@ -2701,8 +2812,10 @@ def ventanaInternaciones():
     pacienteVar.grid(row=2, column=3, padx=10, pady=5)
 
     sqlPac = "SELECT dni FROM pacientes"
+    cursor = conexion.cursor()
     cursor.execute(sqlPac)
     resultados = cursor.fetchall()
+    cursor.close()
 
     for i in resultados:
         pacienteVar["values"] = (*pacienteVar["values"], i)
@@ -2712,8 +2825,10 @@ def ventanaInternaciones():
     medicoVar.grid(row=2, column=4, padx=10, pady=5)
 
     sqlMed = "SELECT dni FROM medicos"
+    cursor = conexion.cursor()
     cursor.execute(sqlMed)
     resultados = cursor.fetchall()
+    cursor.close()
 
     for i in resultados:
         medicoVar["values"] = (*medicoVar["values"], i)
@@ -2722,8 +2837,10 @@ def ventanaInternaciones():
     patologiaVar.grid(row=4, column=0, padx=10, pady=5)
 
     sqlPat = "SELECT Patologia FROM patologias"
+    cursor = conexion.cursor()
     cursor.execute(sqlPat)
     resultados = cursor.fetchall()
+    cursor.close()
 
     for i in resultados:
         patologiaVar["values"] = (*patologiaVar["values"], i)
@@ -2850,8 +2967,10 @@ def ventanaAsignarI():
         pacienteValue = askstring("Ingresar Datos", "Por favor, ingrese un numero de dni sin puntos ni espacios.",parent=root)
         valores = (pacienteValue,)
         consulta = "SELECT cod_paciente, Nombre, Papellido, dni FROM pacientes WHERE dni = %s"
+        cursor = conexion.cursor()
         cursor.execute(consulta, valores)
         registros = cursor.fetchall()
+        cursor.close()
 
         for a in pacienteTree.get_children():
             pacienteTree.delete(a)
@@ -2920,8 +3039,10 @@ def ventanaAsignarI():
             pacienteTree.delete(a)
 
         consulta = "SELECT * FROM patologias"
+        cursor = conexion.cursor()
         cursor.execute(consulta)
         registros = cursor.fetchall()
+        cursor.close()
 
         for a in patologiaTree.get_children():
             patologiaTree.delete(a)
@@ -2974,8 +3095,10 @@ def ventanaAsignarI():
             patologiaTree.delete(a)
 
         consulta = "SELECT cod_medico, Nombre, Mapellido FROM medicos"
+        cursor = conexion.cursor()
         cursor.execute(consulta)
         registros = cursor.fetchall()
+        cursor.close()
 
         for a in medicoTree.get_children():
             medicoTree.delete(a)
@@ -3476,8 +3599,11 @@ def ventanaAsignarI():
 
                     for i in range(1, 3):
                         sql = f"SELECT paciente, medico, fecha, hora, piso, num_hab, num_cama FROM internaciones WHERE paciente = '{pacienteValue}' AND medico = '{medicoValue}' AND fecha = '{fechaValue}' AND hora = '{horaValue}' AND piso = '{pisoValue}' AND num_hab = '{habValue}' AND num_cama = '{i}'"
+                        
+                        cursor = conexion.cursor()
                         cursor.execute(sql)
                         resultados = cursor.fetchall()
+                        cursor.close()
 
                         if resultados:
                             color = "red"  # Rojo para coincidencias
@@ -3574,17 +3700,22 @@ def ventanaAsignarI():
 
         try:
             sql1 = f"SELECT * FROM internaciones WHERE paciente = '{pacienteValue}' AND medico = '{medicoValue}' AND fecha = '{fechaValue}' AND hora = '{horaValue}' AND piso = '{pisoValue}' AND num_hab = '{habValue}' AND num_cama = '{camaValue}'"
+            
+            cursor = conexion.cursor()
             cursor.execute(sql1)
             resultados = cursor.fetchall()
+            cursor.close()
 
             if resultados:
                 messagebox.showinfo("Internacion ocupada", "La internacion seleccionada se encuentra ocupada.")
             else:
                 valores = (fechaValue, horaValue, pacienteValue, medicoValue, patologiaValue, pisoValue, habValue, camaValue,)
                 sql2 = "INSERT INTO internaciones (fecha, hora, paciente, medico, patologia, piso, num_hab, num_cama) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor = conexion.cursor()
                 cursor.execute(sql2, valores)
-                messagebox.showinfo("Éxito", "La internacion ha sido cargada exitosamente.")
                 conexion.commit()
+                cursor.close()
+                messagebox.showinfo("Éxito", "La internacion ha sido cargada exitosamente.")
                 pacienteLabel.config(text = "")
                 medicoLabel.config(text = "")
                 fechaLabel.config(text = "")
@@ -3696,14 +3827,14 @@ def ventanaEspecialidades():
 
     def actualizar_treeview():
 
+        cursor = conexion.cursor()
         if tree.get_children():
             tree.delete(*tree.get_children())
-        cursor = conexion.cursor()
         select_query = "SELECT * FROM especialidades" 
         cursor.execute(select_query)
         for row in cursor.fetchall():
             tree.insert("", "end", values=row)
-
+        cursor.close()
 
     def modificarRegistro():
         codValue = codVar.get()
@@ -3717,14 +3848,18 @@ def ventanaEspecialidades():
         else:
             valor = (codValue,)
             consulta2 = "SELECT * FROM especialidades WHERE cod_especialidad = %s"
+            cursor = conexion.cursor()
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchall()
+            cursor.close()
 
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
                 if confirmacion:
+                    cursor = conexion.cursor()
                     cursor.execute(update_query, valores)
                     conexion.commit()
+                    cursor.close()
                     messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
                     actualizar_treeview()
 
@@ -3750,9 +3885,11 @@ def ventanaEspecialidades():
         if nombreValue == "":
             messagebox.showerror("Error", "El campo se encuentra vacío.")
         else:
+            cursor = conexion.cursor()
             cursor.execute(insert_query, valores)
             messagebox.showinfo("Éxito", "El registro ha sido cargado exitosamente.")
             conexion.commit()
+            cursor.close()
             actualizar_treeview()
 
             textos = [codVar, nombreVar]
@@ -3770,16 +3907,20 @@ def ventanaEspecialidades():
         else: 
             valor = (id_to_delete,)
             consulta2 = "SELECT * FROM especialidades WHERE cod_especialidad = %s"
+            cursor = conexion.cursor()
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchall()
+            cursor.close()
 
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
                 if confirmacion:
                     valores = (id_to_delete,)
                     delete_query = "DELETE FROM especialidades WHERE cod_especialidad = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(delete_query, valores)
                     conexion.commit()
+                    cursor.close()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
                     actualizar_treeview()
 
@@ -3798,10 +3939,10 @@ def ventanaEspecialidades():
 
     def volcarTodo():
         consulta = "SELECT * FROM especialidades"
+        cursor = conexion.cursor()
         cursor.execute(consulta)
-
         registros = cursor.fetchall()
-
+        cursor.close()
         for a in tree.get_children():
             tree.delete(a)
             
@@ -3833,9 +3974,10 @@ def ventanaEspecialidades():
         elif comboValue != "Especialidad":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
 
+        cursor = conexion.cursor()
         cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
-            
+        cursor.close()
         for a in tree.get_children():
             tree.delete(a)   
 
@@ -4002,15 +4144,14 @@ def ventanaPatologias():
         button.pack(side="left")
 
     def actualizar_treeview():
-
+        cursor = conexion.cursor()
         if tree.get_children():
             tree.delete(*tree.get_children())
-        cursor = conexion.cursor()
         select_query = "SELECT * FROM patologias" 
         cursor.execute(select_query)
         for row in cursor.fetchall():
             tree.insert("", "end", values=row)
-
+        cursor.close()
 
     def modificarRegistro():
         codValue = codVar.get()
@@ -4024,20 +4165,28 @@ def ventanaPatologias():
         else:
             valor = (codValue,)
             consulta2 = "SELECT * FROM patologias WHERE cod_patologia = %s"
+
+            cursor = conexion.cursor()
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchone()
+            cursor.close()
 
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
                 if confirmacion:
                     valor = (codValue,)
                     consulta2 = "SELECT * FROM patologias WHERE cod_patologia = %s"
+
+                    cursor = conexion.cursor()
                     cursor.execute(consulta2, valor)
                     resultado = cursor.fetchall()
+                    cursor.close()
 
                     if resultado:
+                        cursor = conexion.cursor()
                         cursor.execute(update_query, valores)
                         conexion.commit()
+                        cursor.close()
                         messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
                         actualizar_treeview()
 
@@ -4065,9 +4214,11 @@ def ventanaPatologias():
         if nombreValue == "":
             messagebox.showerror("Error", "El campo se encuentra vacío.")
         else:
+            cursor = conexion.cursor()
             cursor.execute(insert_query, valores)
             messagebox.showinfo("Éxito", "El registro ha sido cargado exitosamente.")
             conexion.commit()
+            cursor.close()
             actualizar_treeview()
 
             textos = [codVar, nombreVar]
@@ -4085,16 +4236,20 @@ def ventanaPatologias():
         else: 
             valor = (id_to_delete,)
             consulta2 = "SELECT * FROM patologias WHERE cod_patologia = %s"
+            cursor = conexion.cursor()
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchall()
+            cursor.close()
 
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
                 if confirmacion:
                     valores = (id_to_delete,)
                     delete_query = "DELETE FROM patologias WHERE cod_patologia = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(delete_query, valores)
                     conexion.commit()
+                    cursor.close()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
                     actualizar_treeview()
 
@@ -4112,10 +4267,10 @@ def ventanaPatologias():
 
     def volcarTodo():
         consulta = "SELECT * FROM patologias"
+        cursor = conexion.cursor()
         cursor.execute(consulta)
-
         registros = cursor.fetchall()
-
+        cursor.close()
         for a in tree.get_children():
             tree.delete(a)
             
@@ -4147,8 +4302,10 @@ def ventanaPatologias():
         elif comboValue != "Patologia":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
 
+        cursor = conexion.cursor()
         cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
+        cursor.close()
 
         for a in tree.get_children():
             tree.delete(a)
@@ -4316,15 +4473,15 @@ def ventanaUsuarios():
         button.pack(side="left")
 
     def actualizar_treeview():
-        # Verificar si hay elementos en el Treeview antes de intentar eliminarlos
-        if tree.get_children():
-            tree.delete(*tree.get_children())  # Eliminar todas las filas excepto la raíz
+
         cursor = conexion.cursor()
+        if tree.get_children():
+            tree.delete(*tree.get_children())
         select_query = "SELECT * FROM usuarios" 
         cursor.execute(select_query)
         for row in cursor.fetchall():
             tree.insert("", "end", values=row)
-
+        cursor.close()
 
     def modificarRegistro():
         codUserValue = cod_user_var.get()
@@ -4340,20 +4497,26 @@ def ventanaUsuarios():
         else:
             valor = (codUserValue,)
             consulta2 = "SELECT * FROM turnos WHERE cod_turno = %s"
+            cursor = conexion.cursor()
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchone()
+            cursor.close()
 
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
                 if confirmacion:
                     valor = (codUserValue,)
                     consulta2 = "SELECT * FROM usuarios WHERE cod_usuario = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(consulta2, valor)
                     resultado = cursor.fetchall()
+                    cursor.close()
 
                     if resultado:
+                        cursor = conexion.cursor()
                         cursor.execute(update_query, valores)
                         conexion.commit()
+                        cursor.close()
                         messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
                         actualizar_treeview()
 
@@ -4383,9 +4546,11 @@ def ventanaUsuarios():
         if userValue == "" or passValue == "":
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
+            cursor = conexion.cursor()
             cursor.execute(insert_query, valores)
             messagebox.showinfo("Éxito", "El registro ha sido cargado exitosamente.")
             conexion.commit()
+            cursor.close()
             actualizar_treeview()
 
             textCamp = [cod_user_var, user_var, pass_var]
@@ -4405,16 +4570,20 @@ def ventanaUsuarios():
         else: 
             valor = (id_to_delete,)
             consulta2 = "SELECT * FROM usuarios WHERE cod_usuario = %s"
+            cursor = conexion.cursor()
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchall()
+            cursor.close()
 
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea eliminar el registro?")
                 if confirmacion:
                     valores = (id_to_delete,)
                     delete_query = "DELETE FROM usuarios WHERE cod_usuario = %s"
+                    cursor = conexion.cursor()
                     cursor.execute(delete_query, valores)
                     conexion.commit()
+                    cursor.close()
                     messagebox.showinfo("Exito", "El registro ha sido eliminado exitosamente.")
                     actualizar_treeview()
 
@@ -4432,12 +4601,11 @@ def ventanaUsuarios():
     # Función para volcar datos desde la base de datos al Treeview
     def volcarTodo():
         consulta = "SELECT * FROM usuarios"
+        cursor = conexion.cursor()
         cursor.execute(consulta)
-            
-            # Obtener todos los registros
         registros = cursor.fetchall()
-            
-            # Limpiar el Treeview
+        cursor.close()
+        
         for a in tree.get_children():
             tree.delete(a)
             
@@ -4472,10 +4640,11 @@ def ventanaUsuarios():
         elif comboValue != "Usuario" or comboValue != "Contraseña":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
 
+        cursor = conexion.cursor()
         cursor.execute(consulta, ("%" + searchValue + "%",))
-
         registros = cursor.fetchall()
-            
+        cursor.close()
+
         for a in tree.get_children():
             tree.delete(a)
         
@@ -4580,7 +4749,6 @@ if __name__ == "__main__":
 
 
 try:
-    cursor.close()
     conexion.close()
 
 except Exception as e:
