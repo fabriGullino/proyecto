@@ -35,7 +35,7 @@ def ventanaAcceso():
         usuario = entry_user.get()
         contraseña = entry_pass.get()
         
-        consulta = "SELECT * FROM usuarios WHERE nom_usuario = %s AND contraseña = %s"
+        consulta = "SELECT * FROM usuarios WHERE nom_usuario LIKE %s AND contraseña LIKE %s"
         valores = (usuario, contraseña)
         cursor.execute(consulta, valores)
         resultado = cursor.fetchone()
@@ -83,6 +83,8 @@ def ventanaAcceso():
     userLabel.pack(pady=10)
     entry_user = tk.Entry(accessFrame, width=30, font=roboto, bg="#fefefe")
     entry_user.pack()
+
+    entry_user.focus_set()
 
     passLabel = tk.Label(accessFrame, text="Contraseña", font=roboto, background="#bc6c25", foreground="white")
     passLabel.pack(pady=10)
@@ -403,64 +405,52 @@ def ventanaPacientes():
             textboxx[index].insert(0, value)
 
 
-    def columnSearch():
+    def columnSearch(event):
         comboValue = comboSearch.get()
         searchValue = search.get()
-        valor = (searchValue,)
 
-        if comboValue == "" or searchValue == "":
+        consulta = None
 
-            messagebox.showinfo("Campo Vacio", "Uno o varios campos se encuentran vacios.")
-
-        if comboValue == "Codigo de Paciente":
-            consulta = "SELECT * FROM pacientes WHERE cod_paciente = %s"
+        if comboValue == "":
+            messagebox.showinfo("Campo Vacio", "El selector se encuentra vacio.")
         elif comboValue == "Nombre":
-            consulta = "SELECT * FROM pacientes WHERE Nombre = %s"
+            consulta = "SELECT * FROM pacientes WHERE Nombre LIKE %s"
         elif comboValue == "Apellido":
-            consulta = "SELECT * FROM pacientes WHERE Papellido = %s"
+            consulta = "SELECT * FROM pacientes WHERE Papellido LIKE %s"
         elif comboValue == "Fecha de Nacimiento":
-            consulta = "SELECT * FROM pacientes WHERE fecha_de_nac = %s"
+            consulta = "SELECT * FROM pacientes WHERE fecha_de_nac LIKE %s"
         elif comboValue == "Dni":
-            consulta = "SELECT * FROM pacientes WHERE dni = %s"
+            consulta = "SELECT * FROM pacientes WHERE dni LIKE %s"
         elif comboValue == "Direccion":
-            consulta = "SELECT * FROM pacientes WHERE direc = %s"
+            consulta = "SELECT * FROM pacientes WHERE direc LIKE %s"
         elif comboValue == "Telefono":
-            consulta = "SELECT * FROM pacientes WHERE telefono = %s"
-        else:
+            consulta = "SELECT * FROM pacientes WHERE telefono LIKE %s"
+        elif comboValue != "Codigo de Paciente" or comboValue != "Nombre" or comboValue != "Apellido" or comboValue != "Fecha de Nacimiento" or comboValue != "Dni" or comboValue != "Direccion" or comboValue != "Telefono":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-            return
-
-        cursor.execute(consulta, valor)
-
-        registros = cursor.fetchall()
             
+        cursor.execute(consulta, ("%" + searchValue + "%",))
+        registros = cursor.fetchall()
 
         for a in tree.get_children():
             tree.delete(a)
-            
 
-        for registro in registros:
-            tree.insert("", "end", values=registro)
-
+        if searchValue == "":
+            for a in tree.get_children():
+                tree.delete(a)
+        else:
+            for registro in registros:
+                tree.insert("", "end", values=registro)
 
     searchFrame = tk.Frame(root, background="#bc6c25")
     searchFrame.pack(pady=10)
 
-
-    comboSearch = ttk.Combobox(searchFrame, values=["Codigo de Paciente", "Nombre", "Apellido", "Fecha de Nacimiento", "Dni", "Direccion", "Telefono"], width=44)
+    comboSearch = ttk.Combobox(searchFrame, values=["Nombre", "Apellido", "Fecha de Nacimiento", "Dni", "Direccion", "Telefono"], width=44)
     comboSearch.pack(side="left", padx=10)
-
-    def buscarr(event, funcion):
-        funcion()
 
     search = tk.Entry(searchFrame, width=44, font=roboto)
     search.pack(side="left", padx=10)
 
-    search.bind('<Return>', lambda event, entry=columnSearch: buscarr(event, entry))
-
-    searchButton = tk.Button(searchFrame, text="Buscar", width=44, command=columnSearch, background="#6c757d", foreground="#fefefe", font=roboto)
-    searchButton.pack(side="left", padx=10)
-
+    search.bind("<KeyRelease>", columnSearch)
 
     tree_frame = tk.Frame(root, background="#bc6c25")
     tree_frame.pack(pady=10)
@@ -796,65 +786,55 @@ def ventanaMedicos():
             textboxx[index].insert(0, value)
 
 
-    def columnSearch():
+    def columnSearch(event):
         comboValue = comboSearch.get()
         searchValue = search.get()
-        valor = (searchValue,)
 
-        if comboValue == "" or searchValue == "":
+        consulta = None
 
-            messagebox.showinfo("Campo Vacio", "Uno o varios campos se encuentran vacios.")
-
-        if comboValue == "Codigo de Medico":
-            consulta = "SELECT * FROM medicos WHERE cod_medico = %s"
+        if comboValue == "":
+            messagebox.showinfo("Campo Vacio", "El selector se encuentra vacio.")
         elif comboValue == "Nombre":
-            consulta = "SELECT * FROM medicos WHERE Nombre = %s"
+            consulta = "SELECT * FROM medicos WHERE Nombre LIKE %s"
         elif comboValue == "Apellido":
-            consulta = "SELECT * FROM medicos WHERE Mapellido = %s"
+            consulta = "SELECT * FROM medicos WHERE Mapellido LIKE %s"
         elif comboValue == "Fecha de Nacimiento":
-            consulta = "SELECT * FROM medicos WHERE fecha_de_nac = %s"
+            consulta = "SELECT * FROM medicos WHERE fecha_de_nac LIKE %s"
         elif comboValue == "Dni":
-            consulta = "SELECT * FROM medicos WHERE dni = %s"
+            consulta = "SELECT * FROM medicos WHERE dni LIKE %s"
         elif comboValue == "Direccion":
-            consulta = "SELECT * FROM medicos WHERE direc = %s"
+            consulta = "SELECT * FROM medicos WHERE direc LIKE %s"
         elif comboValue == "Telefono":
-            consulta = "SELECT * FROM medicos WHERE telefono = %s"
+            consulta = "SELECT * FROM medicos WHERE telefono LIKE %s"
         elif comboValue == "Especialidad":
-            consulta = "SELECT * FROM medicos WHERE especialidad = %s"
-        else:
+            consulta = "SELECT * FROM medicos WHERE especialidad LIKE %s"
+        elif comboValue != "Nombre" or comboValue != "Apellido" or comboValue != "Fecha de Nacimiento" or comboValue != "Dni" or comboValue != "Direccion" or comboValue != "Telefono" or comboValue != "Especialidad":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-            return
 
-        cursor.execute(consulta, valor)
-
+        cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
             
-
         for a in tree.get_children():
             tree.delete(a)
-            
 
-        for registro in registros:
-            tree.insert("", "end", values=registro)
+        if searchValue == "":
+            for a in tree.get_children():
+                tree.delete(a)
+        else:
+            for registro in registros:
+                tree.insert("", "end", values=registro)
 
 
     searchFrame = tk.Frame(root, background="#bc6c25")
     searchFrame.pack(pady=10)
 
-    comboSearch = ttk.Combobox(searchFrame, values=["Codigo de Medico", "Nombre", "Apellido", "Fecha de Nacimiento", "Dni", "Direccion", "Telefono", "Especialidad"], width=44)
-    comboSearch.pack(side="left", padx=40)
-
-    def buscarr(event, funcion):
-        funcion()
+    comboSearch = ttk.Combobox(searchFrame, values=["Nombre", "Apellido", "Fecha de Nacimiento", "Dni", "Direccion", "Telefono", "Especialidad"], width=44)
+    comboSearch.pack(side="left", padx=10)
 
     search = tk.Entry(searchFrame, width=44, font=roboto)
-    search.pack(side="left", padx=40)
+    search.pack(side="left", padx=10)
 
-    search.bind('<Return>', lambda event, entry=columnSearch: buscarr(event, entry))
-
-    searchButton = tk.Button(searchFrame, text="Buscar", width=44, command=columnSearch, background="#6c757d", foreground="#fefefe", font=roboto)
-    searchButton.pack(side="left", padx=40)
-
+    search.bind("<KeyRelease>", columnSearch)
 
     tree_frame = tk.Frame(root, background="#bc6c25")
     tree_frame.pack(pady=10)
@@ -1211,57 +1191,46 @@ def ventanaHistoriasClinicas():
 
 
 
-    def columnSearch():
+    def columnSearch(event):
         comboValue = comboSearch.get()
         searchValue = search.get()
-        valor = (searchValue,)
 
-        if comboValue == "" or searchValue == "":
-            messagebox.showinfo("Campo Vacio", "Uno o varios campos se encuentran vacios.")
+        consulta = None
 
-
-        if comboValue == "Cod Paciente":
-            consulta = "SELECT * FROM historia_clinica WHERE paciente = %s"
+        if comboValue == "":
+            messagebox.showinfo("Campo Vacio", "El selector se encuentra vacio.")
+        elif comboValue == "Cod Paciente":
+            consulta = "SELECT * FROM historia_clinica WHERE paciente LIKE %s"
         elif comboValue == "Fecha":
-            consulta = "SELECT * FROM historia_clinica WHERE fecha = %s"
-        else:
+            consulta = "SELECT * FROM historia_clinica WHERE fecha LIKE %s"
+        elif comboValue != "Cod Paciente" or comboValue != "Fecha":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-            return
 
-        cursor.execute(consulta, valor)
-
+        cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
-            
-        # Limpiar el Treeview
+
         for a in tree.get_children():
             tree.delete(a)
-            
-        # Llenar el Treeview con los datos
-        for registro in registros:
-            tree.insert("", "end", values=registro)
 
+        if searchValue == "":    
+            for a in tree.get_children():
+                tree.delete(a)
+        else:
+            for registro in registros:
+                tree.insert("", "end", values=registro)
 
-    def buscarr(event, funcion):
-        funcion()
 
     searchFrame = tk.Frame(root, background="#bc6c25")
     searchFrame.pack(pady=10)
 
     comboSearch = ttk.Combobox(searchFrame, values=["Cod Paciente", "Fecha"], width=45)
-    comboSearch.pack(side="left", padx=31)
+    comboSearch.pack(side="left", padx=10)
 
     # TextBox para mostrar los resultados
     search = tk.Entry(searchFrame, width=45, font=roboto)
-    search.pack(side="left", padx=31)
+    search.pack(side="left", padx=10)
 
-    search.bind('<Return>', lambda event, entry=columnSearch: buscarr(event, entry))
-
-
-    # Botón para realizar la búsqueda
-    searchButton = tk.Button(searchFrame, text="Buscar", width=45, command=columnSearch, background="#6c757d", foreground="#fefefe", font=roboto)
-    searchButton.pack(side="left", padx=31)
-
-
+    search.bind("<KeyRelease>", columnSearch)
 
     # Treeview
     tree_frame = tk.Frame(root, background="#bc6c25")
@@ -1583,60 +1552,48 @@ def ventanaTurnos():
             textboxx[index].insert(0, value)
 
 
-    def columnSearch():
+    def columnSearch(event):
         comboValue = comboSearch.get()
         searchValue = search.get()
-        valor = (searchValue,)
 
-        if comboValue == "" or searchValue == "":
+        consulta = None
 
-            messagebox.showinfo("Campo Vacio", "Uno o varios campos se encuentran vacios.")
-
-        if comboValue == "Codigo de Turno":
-            consulta = "SELECT * FROM turnos WHERE cod_turno = %s"
+        if comboValue == "":
+            messagebox.showinfo("Campo Vacio", "El selector se encuentra vacio.")
         elif comboValue == "Fecha":
-            consulta = "SELECT * FROM turnos WHERE fecha = %s"
+            consulta = "SELECT * FROM turnos WHERE fecha LIKE %s"
         elif comboValue == "Hora":
-            consulta = "SELECT * FROM turnos WHERE hora = %s"
+            consulta = "SELECT * FROM turnos WHERE hora LIKE %s"
         elif comboValue == "Paciente":
-            consulta = "SELECT * FROM turnos WHERE paciente = %s"
+            consulta = "SELECT * FROM turnos WHERE paciente LIKE %s"
         elif comboValue == "Medico":
-            consulta = "SELECT * FROM turnos WHERE medico = %s"
-        else:
+            consulta = "SELECT * FROM turnos WHERE medico LIKE %s"
+        elif comboValue != "Fecha" or comboValue != "Hora" or comboValue != "Paciente" or comboValue != "Medico":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-            return
 
-        cursor.execute(consulta, valor)
-
+        cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
-            
-
+ 
         for a in tree.get_children():
             tree.delete(a)
-            
 
-        for registro in registros:
-            tree.insert("", "end", values=registro)
-
+        if searchValue == "":   
+            for a in tree.get_children():
+                tree.delete(a)
+        else:
+            for registro in registros:
+                tree.insert("", "end", values=registro)
 
     searchFrame = tk.Frame(root, background="#bc6c25")
     searchFrame.pack(pady=10)
 
-    comboSearch = ttk.Combobox(searchFrame, values=["Codigo de Turno", "Fecha", "Hora", "Paciente", "Medico"], width=30)
+    comboSearch = ttk.Combobox(searchFrame, values=["Fecha", "Hora", "Paciente", "Medico"], width=30)
     comboSearch.pack(side="left", padx=10)
-
-    def buscarr(event, funcion):
-        funcion()
 
     search = tk.Entry(searchFrame, width=30, font=roboto)
     search.pack(side="left", padx=10)
 
-    search.bind('<Return>', lambda event, entry=columnSearch: buscarr(event, entry))
-
-
-    searchButton = tk.Button(searchFrame, text="Buscar", width=30, command=columnSearch, background="#6c757d", foreground="#fefefe", font=roboto)
-    searchButton.pack(side="left", padx=10)
-
+    search.bind("<KeyRelease>", columnSearch)
 
     tree_frame = tk.Frame(root, background="#bc6c25")
     tree_frame.pack(pady=10)
@@ -2629,41 +2586,41 @@ def ventanaInternaciones():
             textboxx[index].insert(0, value)
 
 
-    def columnSearch():
+    def columnSearch(event):
         comboValue = comboSearch.get()
         searchValue = search.get()
-        valor = (searchValue,)
 
-        if comboValue == "" or searchValue == "":
+        consulta = None
 
-            messagebox.showinfo("Campo Vacio", "Uno o varios campos se encuentran vacios.")
-
-        if comboValue == "Fecha":
-            consulta = "SELECT * FROM internaciones WHERE fecha = %s"
+        if comboValue == "":
+            messagebox.showinfo("Campo Vacio", "El selector se encuentra vacio.")
+        elif comboValue == "Fecha":
+            consulta = "SELECT * FROM internaciones WHERE fecha LIKE %s"
         elif comboValue == "Hora":
-            consulta = "SELECT * FROM internaciones WHERE hora = %s"
+            consulta = "SELECT * FROM internaciones WHERE hora LIKE %s"
         elif comboValue == "Paciente":
-            consulta = "SELECT * FROM internaciones WHERE paciente = %s"
+            consulta = "SELECT * FROM internaciones WHERE paciente LIKE %s"
         elif comboValue == "Medico":
-            consulta = "SELECT * FROM internaciones WHERE medico = %s"
+            consulta = "SELECT * FROM internaciones WHERE medico LIKE %s"
         elif comboValue == "Patologia":
-            consulta = "SELECT * FROM internaciones WHERE patologia = %s"
+            consulta = "SELECT * FROM internaciones WHERE patologia LIKE %s"
         elif comboValue == "Alta":
-            consulta = "SELECT * FROM internaciones WHERE alta = %s"
-        else:
+            consulta = "SELECT * FROM internaciones WHERE alta LIKE %s"
+        elif comboValue != "Fecha" or comboValue != "Hora" or comboValue != "Paciente" or comboValue != "Medico" or comboValue != "Patologia" or comboValue != "Alta":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-            return
 
-        cursor.execute(consulta, valor)
-
+        cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
-            
 
         for a in tree.get_children():
-            tree.delete(a)
-            
-        for registro in registros:
-            tree.insert("", "end", values=registro)
+            tree.delete(a)   
+
+        if searchValue == "":   
+            for a in tree.get_children():
+                tree.delete(a)
+        else:
+            for registro in registros:
+                tree.insert("", "end", values=registro)
 
 
     searchFrame = tk.Frame(root, background="#bc6c25")
@@ -2672,17 +2629,10 @@ def ventanaInternaciones():
     comboSearch = ttk.Combobox(searchFrame, values=["Fecha", "Hora", "Paciente", "Medico", "Patologia", "Alta"], width=30)
     comboSearch.pack(side="left", padx=10)
 
-    def buscarr(event, funcion):
-        funcion()
-
     search = tk.Entry(searchFrame, width=30, font=roboto)
     search.pack(side="left", padx=10)
 
-    search.bind('<Return>', lambda event, entry=columnSearch: buscarr(event, entry))
-
-
-    searchButton = tk.Button(searchFrame, text="Buscar", width=30, command=columnSearch, background="#6c757d", foreground="#fefefe", font=roboto)
-    searchButton.pack(side="left", padx=10)
+    search.bind("<KeyRelease>", columnSearch)
 
     tree_frame = tk.Frame(root, background="#bc6c25")
     tree_frame.pack(pady=10)
@@ -3870,54 +3820,43 @@ def ventanaEspecialidades():
             textboxx[index].insert(0, value)
 
 
-    def columnSearch():
+    def columnSearch(event):
         comboValue = comboSearch.get()
         searchValue = search.get()
-        valor = (searchValue,)
 
-        if comboValue == "" or searchValue == "":
+        consulta = None
 
-            messagebox.showinfo("Campo Vacio", "Uno o varios campos se encuentran vacios.")
-
-        if comboValue == "Codigo de Especialidad":
-            consulta = "SELECT * FROM especialidades WHERE cod_especialidad = %s"
+        if comboValue == "":
+            messagebox.showinfo("Campo Vacio", "El selector se encuentra vacio.")
         elif comboValue == "Especialidad":
-            consulta = "SELECT * FROM especialidades WHERE Especialidad = %s"
-        else:
+            consulta = "SELECT * FROM especialidades WHERE Especialidad LIKE %s"
+        elif comboValue != "Especialidad":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-            return
 
-        cursor.execute(consulta, valor)
-
+        cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
             
-
         for a in tree.get_children():
-            tree.delete(a)
-            
+            tree.delete(a)   
 
-        for registro in registros:
-            tree.insert("", "end", values=registro)
+        if searchValue == "":  
+            for a in tree.get_children():
+                tree.delete(a)     
+        else:
+            for registro in registros:
+                tree.insert("", "end", values=registro)
 
 
     searchFrame = tk.Frame(root, background="#bc6c25")
     searchFrame.pack(pady=10)
 
-    comboSearch = ttk.Combobox(searchFrame, values=["Codigo de Especialidad", "Especialidad"], width=39)
+    comboSearch = ttk.Combobox(searchFrame, values=["Especialidad"], width=39)
     comboSearch.pack(side="left", padx=10)
-
-    def buscarr(event, funcion):
-        funcion()
 
     search = tk.Entry(searchFrame, width=39, font=roboto)
     search.pack(side="left", padx=10)
 
-    search.bind('<Return>', lambda event, entry=columnSearch: buscarr(event, entry))
-
-
-    searchButton = tk.Button(searchFrame, text="Buscar", width=39, command=columnSearch, background="#6c757d", foreground="#fefefe", font=roboto)
-    searchButton.pack(side="left", padx=10)
-
+    search.bind("<KeyRelease>", columnSearch)
 
     tree_frame = tk.Frame(root, background="#bc6c25")
     tree_frame.pack(pady=10)
@@ -4195,54 +4134,44 @@ def ventanaPatologias():
             textboxx[index].insert(0, value)
 
 
-    def columnSearch():
+    def columnSearch(event):
         comboValue = comboSearch.get()
         searchValue = search.get()
-        valor = (searchValue,)
 
-        if comboValue == "" or searchValue == "":
+        consulta = None
 
-            messagebox.showinfo("Campo Vacio", "Uno o varios campos se encuentran vacios.")
-
-        if comboValue == "Codigo de Patologia":
-            consulta = "SELECT * FROM patologias WHERE cod_patologia = %s"
+        if comboValue == "":
+            messagebox.showinfo("Campo Vacio", "El selector se encuentra vacio.")
         elif comboValue == "Patologia":
-            consulta = "SELECT * FROM patologias WHERE Patologia = %s"
-        else:
+            consulta = "SELECT * FROM patologias WHERE Patologia LIKE %s"
+        elif comboValue != "Patologia":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-            return
 
-        cursor.execute(consulta, valor)
-
+        cursor.execute(consulta, ("%" + searchValue + "%",))
         registros = cursor.fetchall()
-            
 
         for a in tree.get_children():
             tree.delete(a)
-            
 
-        for registro in registros:
-            tree.insert("", "end", values=registro)
+        if searchValue == "":  
+            for a in tree.get_children():
+                tree.delete(a)
+        else:
+            for registro in registros:
+                tree.insert("", "end", values=registro)
+
 
 
     searchFrame = tk.Frame(root, background="#bc6c25")
     searchFrame.pack(pady=10)
 
-    comboSearch = ttk.Combobox(searchFrame, values=["Codigo de Patologia", "Patologia"], width=39)
+    comboSearch = ttk.Combobox(searchFrame, values=["Patologia"], width=39)
     comboSearch.pack(side="left", padx=10)
-
-    def buscarr(event, funcion):
-        funcion()
 
     search = tk.Entry(searchFrame, width=39, font=roboto)
     search.pack(side="left", padx=10)
 
-    search.bind('<Return>', lambda event, entry=columnSearch: buscarr(event, entry))
-
-
-    searchButton = tk.Button(searchFrame, text="Buscar", width=39, command=columnSearch, background="#6c757d", foreground="#fefefe", font=roboto)
-    searchButton.pack(side="left", padx=10)
-
+    search.bind("<KeyRelease>", columnSearch)
 
     tree_frame = tk.Frame(root, background="#bc6c25")
     tree_frame.pack(pady=10)
@@ -4528,55 +4457,47 @@ def ventanaUsuarios():
             textboxes[b].insert(0, value)
 
 
-    def columnSearch():
+    def columnSearch(event):
         comboValue = comboSearch.get()
         searchValue = search.get()
-        valor = (searchValue,)
 
-        if comboValue == "" or searchValue == "":
+        consulta = None
 
-            messagebox.showinfo("Campo Vacio", "Uno o varios campos se encuentran vacios.")
-
+        if comboValue == "":
+            messagebox.showinfo("Campo Vacio", "El selector se encuentra vacio.")
         if comboValue == "Usuario":
-            consulta = "SELECT * FROM usuarios WHERE nom_usuario = %s"
+            consulta = "SELECT * FROM usuarios WHERE nom_usuario LIKE %s"
         elif comboValue == "Contraseña":
-            consulta = "SELECT * FROM usuarios WHERE contraseña = %s"
-        else:
+            consulta = "SELECT * FROM usuarios WHERE contraseña LIKE %s"
+        elif comboValue != "Usuario" or comboValue != "Contraseña":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-            return
 
-        cursor.execute(consulta, valor)
+        cursor.execute(consulta, ("%" + searchValue + "%",))
 
         registros = cursor.fetchall()
             
-        # Limpiar el Treeview
         for a in tree.get_children():
             tree.delete(a)
-            
-        # Llenar el Treeview con los datos
-        for registro in registros:
-            tree.insert("", "end", values=registro)
+        
+        if searchValue == "":  
+            for a in tree.get_children():
+                tree.delete(a)
+        else:
+            for registro in registros:
+                tree.insert("", "end", values=registro)
+
 
 
     searchFrame = tk.Frame(root, background="#bc6c25")
     searchFrame.pack(pady=10)
 
     comboSearch = ttk.Combobox(searchFrame, values=["Usuario", "Contraseña"], width=35)
-    comboSearch.pack(side="left", padx=17)
+    comboSearch.pack(side="left", padx=10)
 
-    def buscarr(event, funcion):
-        funcion()
-
-    # TextBox para mostrar los resultados
     search = tk.Entry(searchFrame, width=35, font=roboto)
-    search.pack(side="left", padx=17)
+    search.pack(side="left", padx=10)
 
-    search.bind('<Return>', lambda event, entry=columnSearch: buscarr(event, entry))
-
-
-    # Botón para realizar la búsqueda
-    searchButton = tk.Button(searchFrame, text="Buscar", width=35, command=columnSearch, background="#6c757d", foreground="#fefefe", font=roboto)
-    searchButton.pack(side="left", padx=17)
+    search.bind("<KeyRelease>", columnSearch)
 
     # Treeview
     tree_frame = tk.Frame(root, background="#bc6c25")
