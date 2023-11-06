@@ -837,14 +837,32 @@ def ventanaMedicos():
         elif comboValue == "Telefono":
             consulta = "SELECT * FROM medicos WHERE telefono LIKE %s"
         elif comboValue == "Especialidad":
-            consulta = "SELECT * FROM medicos WHERE especialidad LIKE %s"
+            consulta = "SELECT cod_especialidad FROM especialidades WHERE Especialidad LIKE %s"
+        
+        if comboValue == "Nombre" or comboValue == "Apellido" or comboValue == "Fecha de Nacimiento" or comboValue == "Dni" or comboValue == "Direccion" or comboValue == "Telefono":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.close()
+        elif comboValue == "Especialidad":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.nextset()
+            cursor.close()
+            if len(registros) > 0:
+                cursor = conexion.cursor()
+                valor = (registros[0])
+                consulta1 = "SELECT * FROM medicos WHERE especialidad LIKE %s"
+                cursor.execute(consulta1, valor)
+                registros = cursor.fetchall()
+                cursor.nextset()
+                cursor.close()
+            else:
+                messagebox.showinfo("Sin registros", "No se han encontrado turnos asociados a ese paciente.")
+
         elif comboValue != "Nombre" or comboValue != "Apellido" or comboValue != "Fecha de Nacimiento" or comboValue != "Dni" or comboValue != "Direccion" or comboValue != "Telefono" or comboValue != "Especialidad":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
-        
-        cursor = conexion.cursor()
-        cursor.execute(consulta, ("%" + searchValue + "%",))
-        registros = cursor.fetchall()
-        cursor.close()
 
         for a in tree.get_children():
             tree.delete(a)
@@ -1247,17 +1265,35 @@ def ventanaHistoriasClinicas():
 
         if comboValue == "":
             messagebox.showinfo("Campo Vacio", "El selector se encuentra vacio.")
-        elif comboValue == "Cod Paciente":
-            consulta = "SELECT * FROM historia_clinica WHERE paciente LIKE %s"
+        elif comboValue == "Paciente (Dni)":
+            consulta = "SELECT cod_paciente FROM pacientes WHERE dni LIKE %s"
         elif comboValue == "Fecha":
             consulta = "SELECT * FROM historia_clinica WHERE fecha LIKE %s"
-        elif comboValue != "Cod Paciente" or comboValue != "Fecha":
+        
+        if comboValue == "Fecha":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.close()
+        elif comboValue == "Paciente (Dni)":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.nextset()
+            cursor.close()
+            if len(registros) > 0:
+                cursor = conexion.cursor()
+                valor = (registros[0])
+                consulta1 = "SELECT * FROM historia_clinica WHERE paciente LIKE %s"
+                cursor.execute(consulta1, valor)
+                registros = cursor.fetchall()
+                cursor.nextset()
+                cursor.close()
+            else:
+                messagebox.showinfo("Sin registros", "No se ha encontrado ninguna historia clinica asociada a ese paciente.")
+        elif comboValue != "Paciente (Dni)" or comboValue != "Fecha":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
 
-        cursor = conexion.cursor()
-        cursor.execute(consulta, ("%" + searchValue + "%",))
-        registros = cursor.fetchall()
-        cursor.close()
 
         for a in tree.get_children():
             tree.delete(a)
@@ -1273,7 +1309,7 @@ def ventanaHistoriasClinicas():
     searchFrame = tk.Frame(root, background="#bc6c25")
     searchFrame.pack(pady=10)
 
-    comboSearch = ttk.Combobox(searchFrame, values=["Cod Paciente", "Fecha"], width=45)
+    comboSearch = ttk.Combobox(searchFrame, values=["Paciente (Dni)", "Fecha"], width=45)
     comboSearch.pack(side="left", padx=10)
 
     # TextBox para mostrar los resultados
@@ -1631,6 +1667,7 @@ def ventanaTurnos():
         searchValue = search.get()
 
         consulta = None
+        valor = None
 
         if comboValue == "":
             messagebox.showinfo("Campo Vacio", "El selector se encuentra vacio.")
@@ -1638,18 +1675,54 @@ def ventanaTurnos():
             consulta = "SELECT * FROM turnos WHERE fecha LIKE %s"
         elif comboValue == "Hora":
             consulta = "SELECT * FROM turnos WHERE hora LIKE %s"
-        elif comboValue == "Paciente":
-            consulta = "SELECT * FROM turnos WHERE paciente LIKE %s"
-        elif comboValue == "Medico":
-            consulta = "SELECT * FROM turnos WHERE medico LIKE %s"
-        elif comboValue != "Fecha" or comboValue != "Hora" or comboValue != "Paciente" or comboValue != "Medico":
+        elif comboValue == "Paciente (Dni)":
+            consulta = "SELECT cod_paciente FROM pacientes WHERE dni LIKE %s"
+        elif comboValue == "Medico (Dni)":
+            consulta = "SELECT cod_medico FROM medicos WHERE dni LIKE %s"
+
+
+        if comboValue == "Fecha" or comboValue == "Hora":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.close()
+        elif comboValue == "Paciente (Dni)":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.nextset()
+            cursor.close()
+            if len(registros) > 0:
+                cursor = conexion.cursor()
+                valor = registros[0]
+                consulta1 = "SELECT * FROM turnos WHERE paciente LIKE %s"
+                cursor.execute(consulta1, valor)
+                registros = cursor.fetchall()
+                cursor.nextset()
+                cursor.close()
+            else:
+                messagebox.showinfo("Sin registros", "No se han encontrado turnos asociados a ese paciente.")
+        elif comboValue == "Medico (Dni)":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.nextset()
+            cursor.close()
+            if len(registros) > 0:
+                cursor = conexion.cursor()
+                valor = registros[0]
+                consulta1 = "SELECT * FROM turnos WHERE medico LIKE %s"
+                cursor.execute(consulta1, valor)
+                registros = cursor.fetchall()
+                cursor.nextset()
+                cursor.close()
+            else:
+                messagebox.showinfo("Sin registros", "No se han encontrado turnos asociados a ese medico.")
+
+        elif comboValue != "Fecha" or comboValue != "Hora" or comboValue != "Paciente (Dni)" or comboValue != "Medico (Dni)":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
 
-        cursor = conexion.cursor()
-        cursor.execute(consulta, ("%" + searchValue + "%",))
-        registros = cursor.fetchall()
-        cursor.close()
- 
+
         for a in tree.get_children():
             tree.delete(a)
 
@@ -1663,7 +1736,7 @@ def ventanaTurnos():
     searchFrame = tk.Frame(root, background="#bc6c25")
     searchFrame.pack(pady=10)
 
-    comboSearch = ttk.Combobox(searchFrame, values=["Fecha", "Hora", "Paciente", "Medico"], width=30)
+    comboSearch = ttk.Combobox(searchFrame, values=["Fecha", "Hora", "Paciente (Dni)", "Medico (Dni)"], width=30)
     comboSearch.pack(side="left", padx=10)
 
     search = tk.Entry(searchFrame, width=30, font=roboto)
@@ -2437,44 +2510,47 @@ def ventanaAsignarT():
         fecha = fechaLabel.cget("text")
         hora = horaLabel.cget("text")
 
-        try:
-            sql1 = f"SELECT * FROM turnos WHERE paciente = '{pacienteCode}' AND medico = '{medicoCode}' AND fecha = '{fecha}' AND hora = '{hora}'"
-            cursor = conexion.cursor()
-            cursor.execute(sql1)
-            resultados = cursor.fetchall()
-            cursor.close()
-            if resultados:
-                messagebox.showinfo("Turno ocupado", "El turno seleccionado se encuentra ocupado.")
-            else:
-                valores = (fecha, hora, pacienteCode, medicoCode,)
-                sql2 = "INSERT INTO turnos (fecha, hora, paciente, medico) VALUES (%s,%s,%s,%s)"
-                cursor = conexion.cursor()                
-                cursor.execute(sql2, valores)
-                conexion.commit()
+        if pacienteCode == "" or medicoCode == "" or fecha == "" or hora == "":
+            messagebox.showerror("Campos vacios", "Uno o mas campos se encuentran vacios.")
+        else:
+            try:
+                sql1 = f"SELECT * FROM turnos WHERE paciente = '{pacienteCode}' AND medico = '{medicoCode}' AND fecha = '{fecha}' AND hora = '{hora}'"
+                cursor = conexion.cursor()
+                cursor.execute(sql1)
+                resultados = cursor.fetchall()
                 cursor.close()
-                messagebox.showinfo("Éxito", "El turno ha sido cargado exitosamente.")
-                pacienteLabel.config(text = "")
-                medicoLabel.config(text = "")
-                fechaLabel.config(text = "")
-                horaLabel.config(text = "")
-                for item in pacienteTree.get_children():
-                    pacienteTree.delete(item)
-                for item in medicoTree.get_children():
-                    medicoTree.delete(item)
-                for item in especialidadTree.get_children():
-                    especialidadTree.delete(item)
-                for item in añoTree.get_children():
-                    añoTree.delete(item)
-                for item in mesTree.get_children():
-                    mesTree.delete(item)
-                for item in diaTree.get_children():
-                    diaTree.delete(item)
-                for item in horaTree.get_children():
-                    horaTree.delete(item)
+                if resultados:
+                    messagebox.showinfo("Turno ocupado", "El turno seleccionado se encuentra ocupado.")
+                else:
+                    valores = (fecha, hora, pacienteCode, medicoCode,)
+                    sql2 = "INSERT INTO turnos (fecha, hora, paciente, medico) VALUES (%s,%s,%s,%s)"
+                    cursor = conexion.cursor()                
+                    cursor.execute(sql2, valores)
+                    conexion.commit()
+                    cursor.close()
+                    messagebox.showinfo("Éxito", "El turno ha sido cargado exitosamente.")
+                    pacienteLabel.config(text = "")
+                    medicoLabel.config(text = "")
+                    fechaLabel.config(text = "")
+                    horaLabel.config(text = "")
+                    for item in pacienteTree.get_children():
+                        pacienteTree.delete(item)
+                    for item in medicoTree.get_children():
+                        medicoTree.delete(item)
+                    for item in especialidadTree.get_children():
+                        especialidadTree.delete(item)
+                    for item in añoTree.get_children():
+                        añoTree.delete(item)
+                    for item in mesTree.get_children():
+                        mesTree.delete(item)
+                    for item in diaTree.get_children():
+                        diaTree.delete(item)
+                    for item in horaTree.get_children():
+                        horaTree.delete(item)
 
 
-        except Exception as e:
-            messagebox.showerror("Error", f"Ocurrió un error: {str(e)}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Ocurrió un error: {str(e)}")
 
     executeButton = tk.Button(frameGeneral3, text="Asignar Turno", width=20, height=1, command=cargar_turno, background="#6c757d", foreground="#fefefe", font=roboto)
     executeButton.grid(row=0, column=7, rowspan=2, columnspan=2, padx=5, pady=2)
@@ -2741,21 +2817,76 @@ def ventanaInternaciones():
             consulta = "SELECT * FROM internaciones WHERE fecha LIKE %s"
         elif comboValue == "Hora":
             consulta = "SELECT * FROM internaciones WHERE hora LIKE %s"
-        elif comboValue == "Paciente":
-            consulta = "SELECT * FROM internaciones WHERE paciente LIKE %s"
-        elif comboValue == "Medico":
-            consulta = "SELECT * FROM internaciones WHERE medico LIKE %s"
+        elif comboValue == "Paciente (Dni)":
+            consulta = "SELECT cod_paciente FROM pacientes WHERE dni LIKE %s"
+        elif comboValue == "Medico (Dni)":
+            consulta = "SELECT cod_medico FROM medicos WHERE dni LIKE %s"
         elif comboValue == "Patologia":
-            consulta = "SELECT * FROM internaciones WHERE patologia LIKE %s"
+            consulta = "SELECT cod_patologia FROM patologias WHERE Patologia LIKE %s"
         elif comboValue == "Alta":
             consulta = "SELECT * FROM internaciones WHERE alta LIKE %s"
-        elif comboValue != "Fecha" or comboValue != "Hora" or comboValue != "Paciente" or comboValue != "Medico" or comboValue != "Patologia" or comboValue != "Alta":
+
+        if comboValue == "Fecha" or comboValue == "Hora" or comboValue == "Alta":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.close()
+
+        elif comboValue == "Paciente (Dni)":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.nextset()
+            cursor.close()
+            if len(registros) > 0:
+                cursor = conexion.cursor()
+                valor = registros[0]
+                consulta1 = "SELECT * FROM internaciones WHERE paciente LIKE %s"
+                cursor.execute(consulta1, valor)
+                registros = cursor.fetchall()
+                cursor.nextset()
+                cursor.close()
+            else:
+                messagebox.showinfo("Sin registros", "No se han encontrado internaciones asociadas a ese paciente.")
+
+        elif comboValue == "Medico (Dni)":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.nextset()
+            cursor.close()
+            if len(registros) > 0:
+                cursor = conexion.cursor()
+                valor = registros[0]
+                consulta1 = "SELECT * FROM internaciones WHERE medico LIKE %s"
+                cursor.execute(consulta1, valor)
+                registros = cursor.fetchall()
+                cursor.nextset()
+                cursor.close()
+            else:
+                messagebox.showinfo("Sin registros", "No se han encontrado internaciones asociadas a ese medico.")
+
+        elif comboValue == "Patologia":
+            cursor = conexion.cursor()
+            cursor.execute(consulta, ("%" + searchValue + "%",))
+            registros = cursor.fetchall()
+            cursor.nextset()
+            cursor.close()
+            if len(registros) > 0:
+                cursor = conexion.cursor()
+                valor = registros[0]
+                consulta1 = "SELECT * FROM internaciones WHERE patologia LIKE %s"
+                cursor.execute(consulta1, valor)
+                registros = cursor.fetchall()
+                cursor.nextset()
+                cursor.close()
+            else:
+                messagebox.showinfo("Sin registros", "No se han encontrado internaciones asociadas a esa patologia.")
+
+        elif comboValue != "Fecha" or comboValue != "Hora" or comboValue != "Paciente (Dni)" or comboValue != "Medico (Dni)" or comboValue != "Patologia" or comboValue != "Alta":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
 
-        cursor = conexion.cursor()
-        cursor.execute(consulta, ("%" + searchValue + "%",))
-        registros = cursor.fetchall()
-        cursor.close()
+
 
         for a in tree.get_children():
             tree.delete(a)   
@@ -2771,7 +2902,7 @@ def ventanaInternaciones():
     searchFrame = tk.Frame(root, background="#bc6c25")
     searchFrame.pack(pady=10)
 
-    comboSearch = ttk.Combobox(searchFrame, values=["Fecha", "Hora", "Paciente", "Medico", "Patologia", "Alta"], width=30)
+    comboSearch = ttk.Combobox(searchFrame, values=["Fecha", "Hora", "Paciente (Dni)", "Medico (Dni)", "Patologia", "Alta"], width=30)
     comboSearch.pack(side="left", padx=10)
 
     search = tk.Entry(searchFrame, width=30, font=roboto)
@@ -3795,55 +3926,58 @@ def ventanaAsignarI():
         habValue = habitacionLabel.cget("text")
         camaValue = camaLabel.cget("text")
 
-        try:
-            sql1 = f"SELECT * FROM internaciones WHERE paciente = '{pacienteValue}' AND medico = '{medicoValue}' AND fecha = '{fechaValue}' AND hora = '{horaValue}' AND piso = '{pisoValue}' AND num_hab = '{habValue}' AND num_cama = '{camaValue}'"
-            
-            cursor = conexion.cursor()
-            cursor.execute(sql1)
-            resultados = cursor.fetchall()
-            cursor.close()
-
-            if resultados:
-                messagebox.showinfo("Internacion ocupada", "La internacion seleccionada se encuentra ocupada.")
-            else:
-                valores = (fechaValue, horaValue, pacienteValue, medicoValue, patologiaValue, pisoValue, habValue, camaValue,)
-                sql2 = "INSERT INTO internaciones (fecha, hora, paciente, medico, patologia, piso, num_hab, num_cama) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        if pacienteValue == "" or medicoValue == "" or fechaValue == "" or patologiaValue == "" or horaValue == "" or pisoValue == "" or habValue == "" or camaValue == "":
+            messagebox.showerror("Campos vacios", "Uno o mas campos se encuentran vacios.")
+        else:
+            try:
+                sql1 = f"SELECT * FROM internaciones WHERE paciente = '{pacienteValue}' AND medico = '{medicoValue}' AND fecha = '{fechaValue}' AND hora = '{horaValue}' AND piso = '{pisoValue}' AND num_hab = '{habValue}' AND num_cama = '{camaValue}'"
+                
                 cursor = conexion.cursor()
-                cursor.execute(sql2, valores)
-                conexion.commit()
+                cursor.execute(sql1)
+                resultados = cursor.fetchall()
                 cursor.close()
-                messagebox.showinfo("Éxito", "La internacion ha sido cargada exitosamente.")
-                pacienteLabel.config(text = "")
-                medicoLabel.config(text = "")
-                fechaLabel.config(text = "")
-                patologiaLabel.config(text = "")
-                horaLabel.config(text = "")
-                pisoLabel.config(text = "")
-                habitacionLabel.config(text = "")
-                camaLabel.config(text = "")
-                for item in pacienteTree.get_children():
-                    pacienteTree.delete(item)
-                for item in medicoTree.get_children():
-                    medicoTree.delete(item)
-                for item in patologiaTree.get_children():
-                    patologiaTree.delete(item)
-                for item in añoTree.get_children():
-                    añoTree.delete(item)
-                for item in mesTree.get_children():
-                    mesTree.delete(item)
-                for item in diaTree.get_children():
-                    diaTree.delete(item)
-                for item in horaTree.get_children():
-                    horaTree.delete(item)
-                for item in pisoTree.get_children():
-                    pisoTree.delete(item)
-                for item in habitacionTree.get_children():
-                    habitacionTree.delete(item)
-                for item in camaTree.get_children():
-                    camaTree.delete(item)
 
-        except Exception as e:
-            messagebox.showerror("Error", f"Ocurrió un error: {str(e)}")
+                if resultados:
+                    messagebox.showinfo("Internacion ocupada", "La internacion seleccionada se encuentra ocupada.")
+                else:
+                    valores = (fechaValue, horaValue, pacienteValue, medicoValue, patologiaValue, pisoValue, habValue, camaValue,)
+                    sql2 = "INSERT INTO internaciones (fecha, hora, paciente, medico, patologia, piso, num_hab, num_cama) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor = conexion.cursor()
+                    cursor.execute(sql2, valores)
+                    conexion.commit()
+                    cursor.close()
+                    messagebox.showinfo("Éxito", "La internacion ha sido cargada exitosamente.")
+                    pacienteLabel.config(text = "")
+                    medicoLabel.config(text = "")
+                    fechaLabel.config(text = "")
+                    patologiaLabel.config(text = "")
+                    horaLabel.config(text = "")
+                    pisoLabel.config(text = "")
+                    habitacionLabel.config(text = "")
+                    camaLabel.config(text = "")
+                    for item in pacienteTree.get_children():
+                        pacienteTree.delete(item)
+                    for item in medicoTree.get_children():
+                        medicoTree.delete(item)
+                    for item in patologiaTree.get_children():
+                        patologiaTree.delete(item)
+                    for item in añoTree.get_children():
+                        añoTree.delete(item)
+                    for item in mesTree.get_children():
+                        mesTree.delete(item)
+                    for item in diaTree.get_children():
+                        diaTree.delete(item)
+                    for item in horaTree.get_children():
+                        horaTree.delete(item)
+                    for item in pisoTree.get_children():
+                        pisoTree.delete(item)
+                    for item in habitacionTree.get_children():
+                        habitacionTree.delete(item)
+                    for item in camaTree.get_children():
+                        camaTree.delete(item)
+
+            except Exception as e:
+                messagebox.showerror("Error", f"Ocurrió un error: {str(e)}")
 
     executeButton = tk.Button(frameGeneral3, text="Asignar Internacion", width=20, height=1, command=cargar_internacion, background="#6c757d", foreground="#fefefe", font=roboto)
     executeButton.grid(row=0, column=11, rowspan=2, columnspan=2, padx=5, pady=2)
