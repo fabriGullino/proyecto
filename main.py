@@ -731,6 +731,7 @@ def ventanaMedicos():
             consulta2 = "SELECT cod_especialidad FROM especialidades WHERE Especialidad = %s"
             cursor.execute(consulta2, valor)
             resultado = cursor.fetchone()
+            cursor.nextset()
             cursor.close()
             if resultado:
                 insert_query = "INSERT INTO medicos (Nombre, Mapellido, fecha_de_nac, dni, direc, telefono, especialidad) VALUES (%s, %s, %s, %s, %s, %s, %s)"
