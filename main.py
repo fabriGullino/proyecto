@@ -35,23 +35,37 @@ def ventanaAcceso():
         usuario = entry_user.get()
         contraseña = entry_pass.get()
 
-        cursor = conexion.cursor()
-
-        consulta = "SELECT * FROM usuarios WHERE nom_usuario = %s AND contraseña = %s"
-        valores = (usuario, contraseña)
-        cursor.execute(consulta, valores)
-        resultado = cursor.fetchall()
-        
-        cursor.close()
-
-        if resultado:
-            messagebox.showinfo("Acceso exitoso", "Inicio de sesión exitoso")
-            root.withdraw()
-            ventanaInicio()
-        elif usuario == "" or contraseña == "":
+        if usuario == "" or contraseña == "":
             messagebox.showerror("Error de acceso", "Uno o mas campos se encuentran vacios.")
+
         else:
-            messagebox.showerror("Error de acceso", "Nombre de usuario o contraseña incorrectos")
+
+            cursor = conexion.cursor()
+
+            consulta = "SELECT nom_usuario, contraseña FROM usuarios WHERE nom_usuario = %s"
+            
+            cursor.execute(consulta, (usuario,))
+
+            resultado = cursor.fetchone()
+
+            cursor.nextset()
+            cursor.close()
+
+            if resultado is not None:
+
+                usuario_db, contrasena_db = resultado
+
+                if usuario_db == usuario and contrasena_db == contraseña:
+
+                    messagebox.showinfo("Exito", "Inicio de sesión exitoso.")
+                    root.withdraw()
+                    ventanaInicio()
+
+                else:
+                    messagebox.showerror("Error", "Usuario o contraseña incorrectos.")
+
+            else:
+                messagebox.showerror("Error", "Usuario no encontrado.")
 
     root = tk.Tk()
     root.title("Clinet")
