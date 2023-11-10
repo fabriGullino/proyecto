@@ -48,7 +48,6 @@ def ventanaAcceso():
 
             resultado = cursor.fetchone()
 
-            cursor.nextset()
             cursor.close()
 
             if resultado is not None:
@@ -726,8 +725,6 @@ def ventanaMedicos():
 
 
 
-
-
     def cargarRegistro():
         nombreValue = str(nombreVar.get()).strip()
         mapellidoValue = str(apellidoVar.get()).strip()
@@ -741,29 +738,37 @@ def ventanaMedicos():
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
             cursor = conexion.cursor()
-            valor = (especialidadValue,)
-            consulta2 = "SELECT cod_especialidad FROM especialidades WHERE Especialidad = %s"
-            cursor.execute(consulta2, valor)
-            resultado = cursor.fetchone()
-            cursor.nextset()
-            cursor.close()
-            if resultado:
-                insert_query = "INSERT INTO medicos (Nombre, Mapellido, fecha_de_nac, dni, direc, telefono, especialidad) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                valores = (nombreValue, mapellidoValue, fechaDeNacValue, dniValue, direcValue, telefonoValue, resultado[0])
-                cursor = conexion.cursor()
-                cursor.execute(insert_query, valores)
-                conexion.commit()
-                messagebox.showinfo("Éxito", "El registro ha sido cargado exitosamente.")
-                actualizar_treeview()
-                cursor.close()
-                textos = [codVar, nombreVar, apellidoVar, fechaVar, dniVar, direcVar, telefonoVar, especialidadVar]
 
-                for i in range(len(textos)):
-                    nuevo_valor = ""
-                    textos[i].delete(0, tk.END)
-                    textos[i].insert(0, nuevo_valor)
-            else:
-                messagebox.showerror("Error", "La especialidad ingresada no existe.")
+            try:
+                valor = (especialidadValue,)
+                consulta2 = "SELECT cod_especialidad FROM especialidades WHERE Especialidad = %s"
+                cursor.execute(consulta2, valor)
+                resultado = cursor.fetchone()
+
+                if resultado:
+                    cursor.fetchall()  # Leer y descartar cualquier resultado adicional
+                    cursor.close()  # Cerrar el cursor después de la consulta SELECT
+
+                    cursor = conexion.cursor()
+                    insert_query = "INSERT INTO medicos (Nombre, Mapellido, fecha_de_nac, dni, direc, telefono, especialidad) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                    valores = (nombreValue, mapellidoValue, fechaDeNacValue, dniValue, direcValue, telefonoValue, resultado[0])
+                    cursor.execute(insert_query, valores)
+                    conexion.commit()
+                    messagebox.showinfo("Éxito", "El registro ha sido cargado exitosamente.")
+                    actualizar_treeview()
+
+                    textos = [codVar, nombreVar, apellidoVar, fechaVar, dniVar, direcVar, telefonoVar, especialidadVar]
+
+                    for i in range(len(textos)):
+                        nuevo_valor = ""
+                        textos[i].delete(0, tk.END)
+                        textos[i].insert(0, nuevo_valor)
+                else:
+                    messagebox.showerror("Error", "La especialidad ingresada no existe.")
+            finally:
+                cursor.close()
+
+
 
 
     def eliminarRegistro():
@@ -873,7 +878,7 @@ def ventanaMedicos():
                 cursor.nextset()
                 cursor.close()
             else:
-                messagebox.showinfo("Sin registros", "No se han encontrado turnos asociados a ese paciente.")
+                messagebox.showinfo("Sin registros", "No se han encontrado medicos asociados a esa especialidad.")
 
         elif comboValue != "Nombre" or comboValue != "Apellido" or comboValue != "Fecha de Nacimiento" or comboValue != "Dni" or comboValue != "Direccion" or comboValue != "Telefono" or comboValue != "Especialidad":
             messagebox.showinfo("Columna no válida", "La columna seleccionada no es válida.")
@@ -1106,45 +1111,78 @@ def ventanaHistoriasClinicas():
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
                 if confirmacion:
 
-                    cursor = conexion.cursor()
-                    valor = (pacienteValue,)
-                    consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
-                    cursor.execute(consulta1, valor)
-                    resultado1 = cursor.fetchone()
-                    cursor.close()
-
-                    cursor = conexion.cursor()
-                    consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
-                    cursor.execute(consulta2, valor)
-                    resultado2 = cursor.fetchone()
-                    cursor.close()
-
-                    if resultado1 or resultado2: 
-                        if resultado1:
-                            resultado = resultado1
-                        elif resultado2:
-                            resultado = resultado2
-
-                        update_query = "UPDATE historia_clinica SET descripcion = %s, paciente = %s, fecha = %s WHERE cod_historia = %s"
-                        valores = (histValue, resultado[0], fechaValue, codValue,)
+                    try:
                         cursor = conexion.cursor()
-                        cursor.execute(update_query, valores)
-                        conexion.commit()
+                        valor = (pacienteValue,)
+                        consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
+                        cursor.execute(consulta1, valor)
+                        resultado1 = cursor.fetchone()
+                        cursor.fetchall()
                         cursor.close()
-                        messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
-                        actualizar_treeview()
 
-                        textCamp = [cod_hist_var, paciente_var, fecha_var]
+                        if resultado1:
+                            cursor = conexion.cursor()
+                            consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
+                            cursor.execute(consulta2, valor)
+                            resultado2 = cursor.fetchone()
+                            cursor.close()
 
-                        for i in range(len(textCamp)):
-                            nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
-                            textCamp[i].delete(0, tk.END)  # Borra cualquier texto existente
-                            textCamp[i].insert(0, nuevo_valor)
-                            hist_var.delete('1.0', 'end')
-                            hist_var.insert('1.0', nuevo_valor)
+                            if resultado1 or resultado2: 
+                                if resultado1:
+                                    resultado = resultado1
+                                elif resultado2:
+                                    resultado = resultado2
 
-                    else:
-                        messagebox.showerror("Error", "El paciente ingresado no existe.")
+                                update_query = "UPDATE historia_clinica SET descripcion = %s, paciente = %s, fecha = %s WHERE cod_historia = %s"
+                                valores = (histValue, resultado[0], fechaValue, codValue,)
+                                cursor = conexion.cursor()
+                                cursor.execute(update_query, valores)
+                                conexion.commit()
+                                cursor.close()
+                                messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
+                                actualizar_treeview()
+
+                                textCamp = [cod_hist_var, paciente_var, fecha_var]
+
+                                for i in range(len(textCamp)):
+                                    nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
+                                    textCamp[i].delete(0, tk.END)  # Borra cualquier texto existente
+                                    textCamp[i].insert(0, nuevo_valor)
+                                    hist_var.delete('1.0', 'end')
+                                    hist_var.insert('1.0', nuevo_valor)
+
+                        else:
+                            messagebox.showerror("Error", "El paciente ingresado no existe.")
+
+                    except:
+                        valor = (pacienteValue,)
+                        cursor = conexion.cursor()
+                        consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
+                        cursor.execute(consulta2, valor)
+                        resultado2 = cursor.fetchone()
+                        cursor.close()
+                        
+                        if resultado2:
+                            update_query = "UPDATE historia_clinica SET descripcion = %s, paciente = %s, fecha = %s WHERE cod_historia = %s"
+                            valores = (histValue, pacienteValue, fechaValue, codValue,)
+                            cursor = conexion.cursor()
+                            cursor.execute(update_query, valores)
+                            conexion.commit()
+                            cursor.close()
+                            messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
+                            actualizar_treeview()
+
+                            textCamp = [cod_hist_var, paciente_var, fecha_var]
+
+                            for i in range(len(textCamp)):
+                                nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
+                                textCamp[i].delete(0, tk.END)  # Borra cualquier texto existente
+                                textCamp[i].insert(0, nuevo_valor)
+                                hist_var.delete('1.0', 'end')
+                                hist_var.insert('1.0', nuevo_valor)
+                        else:
+                            messagebox.showerror("Error", "El paciente ingresado no existe.")
+
                 else:
                     messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
             else:
@@ -1162,33 +1200,38 @@ def ventanaHistoriasClinicas():
             messagebox.showerror("Error", "Uno o varios campos se encuentran vacíos.")
         else:
             cursor = conexion.cursor()
-            valor = (pacienteValue,)
-            consulta2 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
-            cursor.execute(consulta2, valor)
-            resultado = cursor.fetchone()
-            cursor.close()
 
-            if resultado:
-                insert_query = "INSERT INTO historia_clinica (descripcion, paciente, fecha) VALUES (%s, %s, %s)"
-                valores = (histValue, resultado[0], fechaValue,)
-                cursor = conexion.cursor()
-                cursor.execute(insert_query, valores)
-                messagebox.showinfo("Éxito", "El registro ha sido cargado exitosamente.")
-                conexion.commit()
+            try:
+                valor = (pacienteValue,)
+                consulta2 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
+                cursor.execute(consulta2, valor)
+                resultado = cursor.fetchone()
+
+                if resultado:
+                    cursor.fetchall()
+                    cursor.close()
+
+                    cursor = conexion.cursor()
+                    insert_query = "INSERT INTO historia_clinica (descripcion, paciente, fecha) VALUES (%s, %s, %s)"
+                    valores = (histValue, resultado[0], fechaValue,)
+                    cursor.execute(insert_query, valores)
+                    messagebox.showinfo("Éxito", "El registro ha sido cargado exitosamente.")
+                    conexion.commit()
+                    actualizar_treeview()
+
+                    textCamp = [cod_hist_var, paciente_var, fecha_var]
+
+                    for i in range(len(textCamp)):
+                        nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
+                        textCamp[i].delete(0, tk.END)  # Borra cualquier texto existente
+                        textCamp[i].insert(0, nuevo_valor)
+                        hist_var.delete('1.0', 'end')
+                        hist_var.insert('1.0', nuevo_valor)
+                
+                else:
+                    messagebox.showerror("Error", "El paciente ingresado no existe.")
+            finally:
                 cursor.close()
-                actualizar_treeview()
-
-                textCamp = [cod_hist_var, paciente_var, fecha_var]
-
-                for i in range(len(textCamp)):
-                    nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
-                    textCamp[i].delete(0, tk.END)  # Borra cualquier texto existente
-                    textCamp[i].insert(0, nuevo_valor)
-                    hist_var.delete('1.0', 'end')
-                    hist_var.insert('1.0', nuevo_valor)
-            
-            else:
-                messagebox.showerror("Error", "El paciente ingresado no existe.")
 
 
 
@@ -1542,72 +1585,82 @@ def ventanaTurnos():
             resultado = cursor.fetchone()
             cursor.close()
             
-            if resultado:
-                    valor1 = (pacienteValue,)
+            if resultado:        
+                paciente = None
+                medico = None
+                valor1 = None                    
+                valor2 = None
+            
+                valor1 = (pacienteValue,)
+                consulta5 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
+                cursor = conexion.cursor()
+                cursor.execute(consulta5, valor1)
+                resultado2 = cursor.fetchone()
+                cursor.close()
+
+                if resultado2:
+                    paciente = resultado2
+
+                else:
                     consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
                     cursor = conexion.cursor()
                     cursor.execute(consulta1, valor1)
                     resultado1 = cursor.fetchone()
                     cursor.close()
 
-                    consulta5 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
-                    cursor = conexion.cursor()
-                    cursor.execute(consulta5, valor1)
-                    resultado2 = cursor.fetchone()
-                    cursor.close()
+                    if resultado1:
+                        paciente = resultado1
 
-                    valor2 = (medicoValue,)
+                    else:
+                        messagebox.showerror("Error", "El paciente ingresado no existe.")
+
+
+                valor2 = (medicoValue,)
+                consulta4 = "SELECT * FROM medicos WHERE cod_medico = %s"
+                cursor = conexion.cursor()
+                cursor.execute(consulta4, valor2)
+                resultado4 = cursor.fetchone()
+                cursor.close()
+
+                if resultado4:
+                    medico = resultado4
+
+                else:
                     consulta3 = "SELECT cod_medico FROM medicos WHERE dni = %s"
                     cursor = conexion.cursor()
                     cursor.execute(consulta3, valor2)
                     resultado3 = cursor.fetchone()
                     cursor.close()
 
-                    consulta4 = "SELECT * FROM medicos WHERE cod_medico = %s"
-                    cursor = conexion.cursor()
-                    cursor.execute(consulta4, valor2)
-                    resultado4 = cursor.fetchone()
-                    cursor.close()
+                    if resultado3:
+                        medico = resultado3
 
-                    paciente = None
-                    medico = None
-
-                    if resultado1 or resultado2: 
-                        if resultado1:
-                            paciente = resultado1
-                        elif resultado2:
-                            paciente = resultado2
-
-                    if resultado3 or resultado4: 
-                        if resultado3:
-                            medico = resultado3
-                        elif resultado4:
-                            medico = resultado4
-
-                    if paciente and medico:
-                            confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
-                            if confirmacion:
-                                update_query = "UPDATE turnos SET fecha = %s, hora = %s, paciente = %s, medico = %s WHERE cod_turno = %s "
-                                valores = (fechaValue, horaValue, paciente[0], medico[0], codValue)
-
-                                cursor = conexion.cursor()
-                                cursor.execute(update_query, valores)
-                                conexion.commit()
-                                cursor.close()
-
-                                messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
-                                actualizar_treeview()
-
-                                textos = [codVar, fechaVar, horaVar, pacienteVar, medicoVar]
-
-                                for i in range(len(textos)):
-                                    nuevo_valor = "" 
-                                    textos[i].delete(0, tk.END)
-                                    textos[i].insert(0, nuevo_valor)
-                            else:
-                                messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
                     else:
-                        messagebox.showerror("Error", "El codigo de paciente o medico ingresado no existe.")
+                        messagebox.showerror("Error", "El medico ingresado no existe.")
+
+
+                if paciente and medico:
+                        confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
+                        if confirmacion:
+                            update_query = "UPDATE turnos SET fecha = %s, hora = %s, paciente = %s, medico = %s WHERE cod_turno = %s "
+                            valores = (fechaValue, horaValue, paciente[0], medico[0], codValue)
+
+                            cursor = conexion.cursor()
+                            cursor.execute(update_query, valores)
+                            conexion.commit()
+                            cursor.close()
+
+                            messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
+                            actualizar_treeview()
+
+                            textos = [codVar, fechaVar, horaVar, pacienteVar, medicoVar]
+
+                            for entry_widget in textos:
+                                nuevo_valor = ""
+                                entry_widget.delete(0, tk.END)
+                                entry_widget.insert(0, nuevo_valor)
+                        else:
+                            messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
             else:
                 messagebox.showerror("Error", "El codigo de turno ingresado no existe.")
 
@@ -2677,65 +2730,87 @@ def ventanaInternaciones():
             cursor.close()
 
             if resultado:
-                    cursor = conexion.cursor()
-                    valor1 = (pacienteValue,)
-                    consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
-                    cursor.execute(consulta1, valor1)
-                    resultado1 = cursor.fetchone()
-                    cursor.close()
-                    cursor = conexion.cursor()
-                    consulta5 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
-                    cursor.execute(consulta5, valor1)
-                    resultado2 = cursor.fetchone()
-                    cursor.close()
-                    cursor = conexion.cursor()
-                    valor2 = (medicoValue,)
-                    consulta3 = "SELECT cod_medico FROM medicos WHERE dni = %s"
-                    cursor.execute(consulta3, valor2)
-                    resultado3 = cursor.fetchone()
-                    cursor.close()
-                    cursor = conexion.cursor()
-                    consulta4 = "SELECT * FROM medicos WHERE cod_medico = %s"
-                    cursor.execute(consulta4, valor2)
-                    resultado4 = cursor.fetchone()
-                    cursor.close()
-                    cursor = conexion.cursor()
-                    valor3 = (patoValue,)
-                    consulta6 = "SELECT cod_patologia FROM patologias WHERE Patologia = %s"
-                    cursor.execute(consulta6, valor3)
-                    resultado5 = cursor.fetchone()
-                    cursor.close()
-                    cursor = conexion.cursor()
-                    consulta7 = "SELECT * FROM patologias WHERE cod_patologia = %s"
-                    cursor.execute(consulta7, valor3)
-                    resultado6 = cursor.fetchone()
-                    cursor.close()
+                    confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
+                    if confirmacion:
+                        paciente = None
+                        medico = None
+                        patologia = None
+                        valor1 = None                    
+                        valor2 = None
+                        valor3 = None
 
-                    paciente = None
-                    medico = None
-                    patologia = None
+                        valor1 = (pacienteValue,)
+                        cursor = conexion.cursor()
+                        consulta5 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
+                        cursor.execute(consulta5, valor1)
+                        resultado2 = cursor.fetchone()
+                        cursor.close()
 
-                    if resultado1 or resultado2: 
-                        if resultado1:
-                            paciente = resultado1
-                        elif resultado2:
+                        if resultado2:
                             paciente = resultado2
 
-                    if resultado3 or resultado4: 
-                        if resultado3:
-                            medico = resultado3
-                        elif resultado4:
+                        else:
+                            cursor = conexion.cursor()
+                            consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
+                            cursor.execute(consulta1, valor1)
+                            resultado1 = cursor.fetchone()
+                            cursor.close()
+
+                            if resultado1:
+                                paciente = resultado1
+
+                            else:
+                                messagebox.showerror("Error", "El paciente ingresado no existe.")
+
+
+                        valor2 = (medicoValue,)
+                        cursor = conexion.cursor()
+                        consulta4 = "SELECT * FROM medicos WHERE cod_medico = %s"
+                        cursor.execute(consulta4, valor2)
+                        resultado4 = cursor.fetchone()
+                        cursor.close()
+
+                        if resultado4:
                             medico = resultado4
 
-                    if resultado5 or resultado6: 
-                        if resultado5:
-                            patologia = resultado5
-                        elif resultado6:
+                        else:
+                            cursor = conexion.cursor()
+                            consulta3 = "SELECT cod_medico FROM medicos WHERE dni = %s"
+                            cursor.execute(consulta3, valor2)
+                            resultado3 = cursor.fetchone()
+                            cursor.close()
+
+                            if resultado3:
+                                medico = resultado3
+
+                            else:
+                                messagebox.showerror("Error", "El medico ingresado no existe.")
+
+
+                        valor3 = (patoValue,)
+                        cursor = conexion.cursor()
+                        consulta7 = "SELECT * FROM patologias WHERE cod_patologia = %s"
+                        cursor.execute(consulta7, valor3)
+                        resultado6 = cursor.fetchone()
+                        cursor.close()
+
+                        if resultado6:
                             patologia = resultado6
 
-                    if paciente and medico and patologia:
-                        confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
-                        if confirmacion:
+                        else:
+                            cursor = conexion.cursor()
+                            consulta6 = "SELECT cod_patologia FROM patologias WHERE Patologia = %s"
+                            cursor.execute(consulta6, valor3)
+                            resultado5 = cursor.fetchone()
+                            cursor.close()
+
+                            if resultado5:
+                                patologia = resultado5
+
+                            else:
+                                messagebox.showerror("Error", "La patologia ingresada no existe.")
+
+                        if paciente and medico and patologia:
                             update_query = f"UPDATE internaciones SET fecha = '{fechaValue}', hora = '{horaValue}', paciente = '{paciente[0]}', medico = '{medico[0]}', patologia = '{patologia[0]}', piso = '{pisoValue}', num_hab = '{numHabValue}', num_cama = '{numCamaValue}', alta = '{altaValue}' WHERE cod_internacion = '{codValue}'"        
                             cursor = conexion.cursor()
                             cursor.execute(update_query)
@@ -2746,14 +2821,13 @@ def ventanaInternaciones():
 
                             textos = [codVar, fechaVar, horaVar, pacienteVar, medicoVar, patologiaVar, pisoVar, numHabVar, numCamVar, altaVar]
 
-                            for i in range(len(textos)):
-                                nuevo_valor = "" 
-                                textos[i].delete(0, tk.END)
-                                textos[i].insert(0, nuevo_valor)
-                        else:
-                            messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
+                            for entry_widget in textos:
+                                nuevo_valor = ""
+                                entry_widget.delete(0, tk.END)
+                                entry_widget.insert(0, nuevo_valor)
+
                     else:
-                        messagebox.showerror("Error", "El codigo de paciente, medico o patologia ingresado no existe.")
+                        messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
             else:
                 messagebox.showerror("Error", "El codigo de internacion ingresado no existe.")
 
@@ -3021,8 +3095,11 @@ def ventanaInternaciones():
     resultados = cursor.fetchall()
     cursor.close()
 
-    for i in resultados:
-        patologiaVar["values"] = (*patologiaVar["values"], i)
+    # Convert each result to a string and remove curly braces
+    resultados = [str(result[0]) for result in resultados]
+
+    # Update patologiaVar["values"]
+    patologiaVar["values"] = (*patologiaVar["values"], *resultados)
 
     pisoVar = tk.Entry(textbox_frame, width=20, font=roboto) 
     pisoVar.grid(row=4, column=1, padx=10, pady=5)
