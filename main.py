@@ -61,7 +61,7 @@ def ventanaAcceso():
                     ventanaInicio()
 
                 else:
-                    messagebox.showerror("Error", "Usuario o contraseña incorrectos.")
+                    messagebox.showerror("Error", "La contraseña incorrectos.")
 
             else:
                 messagebox.showerror("Error", "Usuario no encontrado.")
@@ -1110,61 +1110,35 @@ def ventanaHistoriasClinicas():
             if resultado:
                 confirmacion = messagebox.askyesno("Confirmación", "¿Está seguro que desea modificar el registro?")
                 if confirmacion:
+                        paciente = None
+                        valor = None   
 
-                    try:
-                        cursor = conexion.cursor()
-                        valor = (pacienteValue,)
-                        consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
-                        cursor.execute(consulta1, valor)
-                        resultado1 = cursor.fetchone()
-                        cursor.fetchall()
-                        cursor.close()
-
-                        if resultado1:
-                            cursor = conexion.cursor()
-                            consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
-                            cursor.execute(consulta2, valor)
-                            resultado2 = cursor.fetchone()
-                            cursor.close()
-
-                            if resultado1 or resultado2: 
-                                if resultado1:
-                                    resultado = resultado1
-                                elif resultado2:
-                                    resultado = resultado2
-
-                                update_query = "UPDATE historia_clinica SET descripcion = %s, paciente = %s, fecha = %s WHERE cod_historia = %s"
-                                valores = (histValue, resultado[0], fechaValue, codValue,)
-                                cursor = conexion.cursor()
-                                cursor.execute(update_query, valores)
-                                conexion.commit()
-                                cursor.close()
-                                messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
-                                actualizar_treeview()
-
-                                textCamp = [cod_hist_var, paciente_var, fecha_var]
-
-                                for i in range(len(textCamp)):
-                                    nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
-                                    textCamp[i].delete(0, tk.END)  # Borra cualquier texto existente
-                                    textCamp[i].insert(0, nuevo_valor)
-                                    hist_var.delete('1.0', 'end')
-                                    hist_var.insert('1.0', nuevo_valor)
-
-                        else:
-                            messagebox.showerror("Error", "El paciente ingresado no existe.")
-
-                    except:
                         valor = (pacienteValue,)
                         cursor = conexion.cursor()
                         consulta2 = "SELECT * FROM pacientes WHERE cod_paciente = %s"
                         cursor.execute(consulta2, valor)
                         resultado2 = cursor.fetchone()
                         cursor.close()
-                        
+
                         if resultado2:
+                            paciente = resultado2
+
+                        else:
+                            cursor = conexion.cursor()
+                            consulta1 = "SELECT cod_paciente FROM pacientes WHERE dni = %s"
+                            cursor.execute(consulta1, valor)
+                            resultado1 = cursor.fetchone()
+                            cursor.close()
+
+                            if resultado1:
+                                paciente = resultado1
+
+                            else:
+                                messagebox.showerror("Error", "El paciente ingresado no existe.")
+
+                        if paciente:
                             update_query = "UPDATE historia_clinica SET descripcion = %s, paciente = %s, fecha = %s WHERE cod_historia = %s"
-                            valores = (histValue, pacienteValue, fechaValue, codValue,)
+                            valores = (histValue, paciente[0], fechaValue, codValue,)
                             cursor = conexion.cursor()
                             cursor.execute(update_query, valores)
                             conexion.commit()
@@ -1172,17 +1146,14 @@ def ventanaHistoriasClinicas():
                             messagebox.showinfo("Exito", "El registro ha sido modificado exitosamente.")
                             actualizar_treeview()
 
-                            textCamp = [cod_hist_var, paciente_var, fecha_var]
+                            textos = [cod_hist_var, paciente_var, fecha_var]
 
-                            for i in range(len(textCamp)):
-                                nuevo_valor = ""  # Reemplaza esto con el valor que deseas cargar
-                                textCamp[i].delete(0, tk.END)  # Borra cualquier texto existente
-                                textCamp[i].insert(0, nuevo_valor)
+                            for entry_widget in textos:
+                                nuevo_valor = ""
+                                entry_widget.delete(0, tk.END)
+                                entry_widget.insert(0, nuevo_valor)
                                 hist_var.delete('1.0', 'end')
                                 hist_var.insert('1.0', nuevo_valor)
-                        else:
-                            messagebox.showerror("Error", "El paciente ingresado no existe.")
-
                 else:
                     messagebox.showinfo("Cancelacion", "El registro no sera modificado.")
             else:
