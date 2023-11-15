@@ -1,0 +1,1338 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  color: #fefefe;
+  user-select:text;
+}
+
+
+
+body {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../assets/img/hero.jpg");
+  background-size: cover;
+  height: 100vh;
+}
+
+/*------------------------BARRA DE NAVEGACION*/
+
+.container {
+  margin: 0 auto;
+  width: 90%;
+  max-width: 1200px;
+  overflow: hidden;
+}
+
+.nav {
+  padding: 40px 0;
+  display: grid;
+  justify-content: space-between;
+  align-items: center;
+  grid-template-columns: repeat(2, max-content);
+
+  --estado-close: scale(0);
+  --estado-hamburguesa: scale(1);
+  --estado-menu: translate(-100%);
+}
+
+.nav:target {
+  --estado-close: scale(1);
+  --estado-hamburguesa: scale(0);
+  --estado-menu: translate(0);
+}
+
+.nav_hamburguesa {
+  transform: var(--estado-hamburguesa);
+}
+
+.nav_cruz {
+  transform: var(--estado-close);
+}
+
+.nav_logo {
+    height: 5rem;
+    width: 5rem;
+    transition: transform 0.3s ease;
+    
+}
+
+.nav_logo:hover {
+  transform: scale(1.1);
+}
+
+
+.nav_list {
+  background-color: #000;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: grid;
+  align-content: center;
+  gap: 2rem;
+  padding-left: 5%;
+
+  transform: var(--estado-menu);
+  transition: 300ms transform;
+}
+
+.nav_item {
+  list-style: none;
+}
+
+.nav_link {
+	color: #fefefe;
+  position: relative;
+  text-decoration: none;
+}
+
+.nav_link::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  border-radius: 4px;
+  background-color: #fefefe;
+  bottom: 0;
+  left: 0;
+  transform-origin:right;
+  transform: scaleX(0);
+  transition: transform .3s ease-in-out;
+}
+
+.nav_link:hover::before {
+  transform-origin:left;
+  transform: scaleX(1);
+}
+
+.nav_hamburguesa, .nav_cruz {
+  color: #fff;
+  transition: 300ms transform;
+  grid-column: -2/-1;
+  grid-row: 1/2;
+}
+
+.nav_icon {
+  width: 40px;
+}
+
+/*------------------FIN BARRA DE NAVEGACION*/
+
+/*-----------------FOOTER*/
+
+.footer {
+  display:flexbox;  
+  bottom:0;
+  width: 100%;
+  padding-bottom: 0.5rem;
+}
+
+.menu {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.item,
+.menu__item {
+  list-style: none;
+}
+
+.menu__link {
+  font-size: 1rem;
+  color: #fefefe;
+  margin: 0 10px;
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 300;
+  transition: transform 0.3s ease;
+}
+
+.menu__link:hover {
+  transform: scale(1.1);
+}
+
+.footer p {
+  color: #fff;
+  margin: 15px 0 10px 0;
+  font-size: 1rem;
+  font-weight: 200;
+  text-align: center;
+}
+
+/*--------------------------FIN FOOTER*/
+
+
+/*--------------------------INICIO*/
+
+.principal {
+  display:flexbox;
+  justify-content: center;
+  align-items: center;
+  margin-left: 25%;
+  margin-right: 25%;
+  height: 60vh;
+  margin-top: 7%;
+}
+
+.titulo1 {
+  text-align: center;
+  font-size: 5rem;
+  margin-bottom: 2rem;
+}
+
+.parrafoIndex {
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.index {
+  gap: 5rem;
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 5%;
+
+}
+
+.tarjeta {
+  background-color: transparent;
+  border-radius: 2%;
+  border: 1px solid #fefefe;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.3s ease;
+}
+
+.tarjeta:hover {
+  transform: scale(1.1);
+}
+
+.tarjeta img {
+  max-width: 50%;
+}
+
+h2 {
+  font-size: 24px;
+  margin-top: 10px;
+}
+
+p {
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.textoFinal {
+  display: flexbox;
+  justify-content: center;
+  align-items: center;
+  margin-left: 25%;
+  margin-right: 25%;
+  margin-bottom: 5%;
+}
+
+.pUltimo {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/*-----------------FIN INICIO*/
+
+
+
+/*------------------------NOSOTROS*/
+
+.divNosotros {
+  background-color: #495057;
+}
+
+#div-nosotros {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  margin-left: 25%;
+  margin-right: 25%;
+  gap: 2rem;
+}
+
+#div-nosotros h1 {
+  text-align: center;
+}
+
+#div-nosotros p {
+  font-size: 1.1rem;
+}
+
+#ultimo-parrafo {
+  margin-bottom: 2rem;
+}
+
+/*-----------------FIN NOSOTROS*/
+
+/*-----------------CONSULTA*/
+
+.main-consulta {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  height: 100vh;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.divForm {
+  background-color: transparent;
+}
+
+.form11 {
+  display: grid;
+  grid-template-columns: auto;  
+  margin-top: 10%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.inputBusqueda, .btnBusqueda {
+  margin-top: 1rem;
+  height: 3rem;
+  outline: none;
+  color: #fefefe;
+  background-color: transparent;
+  border: 2px solid #fefefe;
+  border-radius: 0.2rem;
+  font-size: medium;
+  transition: 0.25s;
+  padding: 0.5rem;
+}
+
+.btnBusqueda:hover {
+  background-color: transparent;
+  border-color: #080;
+  color:#080;
+  transform: translate(0px, -1px);
+  transition: 0.25s;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.btnBusqueda:focus {
+  background-color: #fefefe;
+  color: #000;
+  transition: 0.25s;
+  border-color: #fefefe;
+}
+
+
+.inputBusqueda::placeholder {
+  color: #fefefe;
+}
+
+
+
+/*------------------FIN CONSULTA*/
+
+/*---------------------CONSULTA PAGINA PHP*/
+
+.main-consulta-php {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+table {
+  border-collapse: collapse;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 5%;
+}
+
+table, th, td {
+  border: 2px solid #fefefe;
+  padding: 2rem;
+  text-align: center;
+  font-size: 1rem;
+}
+
+h3 {
+  margin-top: 5% ;
+  text-align: center;
+}
+
+/*-----------------CONTACTO*/
+
+#mainn {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 5%;
+  height: 100vh;
+  margin-top: 5%;
+  margin-left: 5%;
+  margin-right: 5%;
+  color: #fefefe;
+}
+
+.formm {
+  margin-top: 3.5rem;
+}
+
+.contact-form {
+  background-color: transparent;
+}
+
+.contact-form h2 {
+  margin-top: 0;
+}
+
+.contact-form label,
+.contact-form input,
+.contact-form textarea,
+.contact-form button {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  outline: none;
+}
+
+#mensaje {
+  height: 12.5rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  color: #000;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.contact-form button {
+  background-color: transparent;
+  color: #fefefe;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 2px solid #fefefe;
+  transition: 0.3s;
+  font-size: medium;
+  border-radius: 3px;
+
+}
+
+.contact-form button:hover {
+  background-color: transparent;
+  border-color: #080;
+  color:#080;
+  transform: translate(0px, -1px);
+  transition: 0.25s;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.contact-form button:focus {
+  background-color: #fefefe;
+  color: #000;
+  transition: 0.25s;
+  border-color: #fefefe;
+}
+
+
+.contact-info {
+  height: max-content;
+}
+
+#parrafo {
+  margin-top: 1rem;
+}
+
+.mapa {
+  margin-top: 1rem;
+  width: 100%;
+  height: 21rem;
+}
+
+
+.contact-info h2 {
+  margin-top: 0;
+}
+
+/*-------------------------FIN CONTACTO*/
+
+
+/*------------------MEDIA QUERIES*/
+
+@media (min-width: 768px) {
+  .nav {
+    --estado-hamburguesa: scale(0);
+    --estado-menu: translate(0);
+  }
+
+  .nav:target {
+    --estado-close: scale(0);
+  }
+
+  .nav_list {
+    padding: 0;
+    background-color: unset;
+    position: unset;
+    gap: 1.5rem;
+    grid-auto-flow: column;
+
+    transform: unset;
+
+    grid-column: -2/-1;
+    grid-row: 1/2;
+  }
+
+  .nav_link {
+    font-size: 1rem;
+    letter-spacing: none;
+  }
+
+  /*----------------FOOTER*/
+
+  .footer {
+    display:flexbox;  
+    bottom:0;
+    width: 100%;
+    padding-bottom: 0.5rem;
+  }
+
+  /*----------------FIN FOOTER*/
+
+  /*--------------------------INICIO*/
+
+  .principal {
+    display:flexbox;
+    justify-content: center;
+    align-items: center;
+    margin-left: 25%;
+    margin-right: 25%;
+    height: 80vh;
+    margin-top: 7%;
+  }
+
+  .titulo1 {
+    text-align: center;
+    font-size: 5rem;
+    margin-bottom: 2rem;
+  }
+
+  .parrafoIndex {
+    text-align: center;
+    font-size: 1.5rem;
+  }
+
+  .index {
+    gap: 1.2rem;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 5%;
+
+  }
+
+  .tarjeta {
+    background-color: transparent;
+    border-radius: 2%;
+    border: 1px solid #fefefe;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    padding: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  .tarjeta:hover {
+    transform: scale(1.1);
+  }
+
+  .tarjeta img {
+    max-width: 50%;
+  }
+
+  h2 {
+    font-size: 24px;
+    margin-top: 10px;
+  }
+
+  p {
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
+  .textoFinal {
+    display: flexbox;
+    justify-content: center;
+    align-items: center;
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-bottom: 5%;
+  }
+
+  .pUltimo {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  /*-----------------FIN INICIO*/
+
+
+
+  /*------------------------NOSOTROS*/
+
+  #div-nosotros {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    margin-left: 25%;
+    margin-right: 25%;
+    gap: 2rem;
+  }
+
+  #div-nosotros h1 {
+    text-align: center;
+  }
+
+  #div-nosotros p {
+    font-size: 1.1rem;
+  }
+
+  #ultimo-parrafo {
+    margin-bottom: 2rem;
+  }
+
+  /*-----------------FIN NOSOTROS*/
+
+  /*-----------------CONSULTA*/
+
+  .main-consulta {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    height: 100vh;
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+  .divForm {
+    background-color: transparent;
+  }
+
+  .form11 {
+    display: grid;
+    grid-template-columns: auto;  
+    margin-top: 10%;
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+
+  .inputBusqueda, .btnBusqueda {
+    margin-top: 1rem;
+    height: 3rem;
+    outline: none;
+    color: #fefefe;
+    background-color: transparent;
+    border: 2px solid #fefefe;
+    border-radius: 0.2rem;
+    font-size: medium;
+    transition: 0.25s;
+    padding: 0.5rem;
+  }
+
+  .btnBusqueda:hover {
+    background-color: transparent;
+    border-color: #080;
+    color:#080;
+    transform: translate(0px, -1px);
+    transition: 0.25s;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .btnBusqueda:focus {
+    background-color: #fefefe;
+    color: #000;
+    transition: 0.25s;
+    border-color: #fefefe;
+  }
+
+
+  .inputBusqueda::placeholder {
+    color: #fefefe;
+  }
+
+
+
+  /*------------------FIN CONSULTA*/
+
+  /*---------------------CONSULTA PAGINA PHP*/
+
+  .main-consulta-php {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  table {
+    border-collapse: collapse;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 5%;
+  }
+
+  table, th, td {
+    border: 2px solid #fefefe;
+    padding: 2rem;
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  h3 {
+    margin-top: 5% ;
+    text-align: center;
+  }
+
+  /*-----------------CONTACTO*/
+
+  #mainn {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 5%;
+    height: max-content;
+    margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 5%;
+    color: #fefefe;
+  }
+
+  .formm {
+    margin-top: 3.5rem;
+  }
+
+  .contact-form {
+    background-color: transparent;
+  }
+
+  .contact-form h2 {
+    margin-top: 0;
+  }
+
+  .contact-form label,
+  .contact-form input,
+  .contact-form textarea,
+  .contact-form button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    outline: none;
+  }
+
+  #mensaje {
+    height: 12.5rem;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    color: #000;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+
+  .contact-form button {
+    background-color: transparent;
+    color: #fefefe;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: 2px solid #fefefe;
+    transition: 0.3s;
+    font-size: medium;
+    border-radius: 3px;
+
+  }
+
+  .contact-form button:hover {
+    background-color: transparent;
+    border-color: #080;
+    color:#080;
+    transform: translate(0px, -1px);
+    transition: 0.25s;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .contact-form button:focus {
+    background-color: #fefefe;
+    color: #000;
+    transition: 0.25s;
+    border-color: #fefefe;
+  }
+
+
+  .contact-info {
+    height: max-content;
+  }
+
+  #parrafo {
+    margin-top: 1rem;
+  }
+
+  .mapa {
+    margin-top: 1rem;
+    width: 100%;
+    height: 21rem;
+  }
+
+
+  .contact-info h2 {
+    margin-top: 0;
+  }
+
+  /*-------------------------FIN CONTACTO*/
+
+}
+
+@media (min-width: 371px) and (max-width: 768px) {
+
+  /*---------------INICIO*/
+
+  .principal {
+    display:flexbox;
+    justify-content: center;
+    align-items: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    height: 100vh;
+    margin-top: 15%;
+  }
+  
+  .titulo1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .parrafoIndex {
+    text-align: center;
+    font-size: 1.2rem;
+  }
+  
+  .index {
+    gap: 1rem;
+    display: grid;
+    grid-template-columns: auto auto;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 15%;
+  }
+  
+  .tarjeta {
+    background-color: transparent;
+    border-radius: 2%;
+    border: 1px solid #fefefe;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    padding: 5px;
+    transition: transform 0.3s ease;
+  }
+  
+  .tarjeta:hover {
+    transform: scale(1.1);
+  }
+  
+  .tarjeta img {
+    max-width: 50%;
+  }
+  
+  h2 {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+  
+  p {
+    font-size: 1rem;
+    margin-top: 10px;
+    padding: 0.5rem;
+  }
+  
+  .textoFinal {
+    display: flexbox;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-bottom: 10%;
+  }
+  
+  .pUltimo {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  /*----------------FIN INICIO*/
+
+  /*-----------------NOSOTROS*/
+
+  #div-nosotros {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    gap: 2rem;
+  }
+  
+  #div-nosotros h1 {
+    text-align: center;
+  }
+  
+  #div-nosotros p {
+    text-align: center;
+    font-size: 1.1rem;
+  }
+  
+  #ultimo-parrafo {
+    margin-bottom: 2rem;
+  }
+
+  /*------------------FIN NOSOTROS*/
+
+  /*--------------------CONSULTA*/
+
+  .main-consulta {
+    display: grid;
+    grid-template-columns: auto;
+    height: 100vh;
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+  
+  .divForm {
+    background-color: transparent;
+  }
+  
+  .form11 {
+    display: grid;
+    grid-template-columns: auto;  
+    margin-top: 20%;
+    margin-left: 20%;
+    margin-right: 20%;
+  }
+
+  /*--------------------FIN CONSULTA*/
+
+  /*--------------------CONSULTA PHP*/
+
+  .main-consulta-php {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: max-content;
+    bottom: 0;
+  }
+  
+  table {
+    border-collapse: collapse;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 5%;
+  }
+  
+  table, th, td {
+    border: 2px solid #fefefe;
+    padding: 0;
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 1rem;
+  }
+  
+  h3 {
+    margin-top: 5% ;
+    text-align: center;
+  }
+
+  /*--------------------FIN CONSULTA PHP*/
+
+  /*--------------------CONTACTO*/
+
+  #mainn {
+    display: grid;
+    grid-template-columns: auto;
+    column-gap: 5%;
+    height: max-content;
+    margin-top: 5%;
+    margin-left: 15%;
+    margin-right: 15%;
+    color: #fefefe;
+  }
+  
+  .formm {
+    margin-top: 3.5rem;
+    margin-bottom: 3.5rem;
+    
+  }
+  
+  .contact-form {
+    background-color: transparent;
+  }
+  
+  .contact-form h2 {
+    margin-top: 0;
+  }
+  
+  .contact-form label,
+  .contact-form input,
+  .contact-form textarea,
+  .contact-form button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    outline: none;
+  }
+  
+  #mensaje {
+    height: 12.5rem;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    color: #000;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  .contact-form button {
+    background-color: transparent;
+    color: #fefefe;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: 2px solid #fefefe;
+    transition: 0.3s;
+    font-size: medium;
+    border-radius: 3px;
+  
+  }
+  
+  .contact-form button:hover {
+    background-color: transparent;
+    border-color: #080;
+    color:#080;
+    transform: translate(0px, -1px);
+    transition: 0.25s;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+  
+  .contact-form button:focus {
+    background-color: #fefefe;
+    color: #000;
+    transition: 0.25s;
+    border-color: #fefefe;
+  }
+  
+  
+  .contact-info {
+    height: max-content;
+  }
+  
+  #parrafo {
+    margin-top: 1rem;
+  }
+  
+  .mapa {
+    margin-top: 1rem;
+    width: 100%;
+    height: 21rem;
+    margin-bottom: 1rem;
+  }
+  
+  
+  .contact-info h2 {
+    margin-top: 0;
+  }
+
+  /*--------------------FIN CONTACTO*/
+
+}
+
+@media (max-width: 370px) {
+  
+  /*---------------INICIO*/
+
+  .principal {
+    display:flexbox;
+    justify-content: center;
+    align-items: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    height: 60vh;
+    margin-top: 5%;
+  }
+  
+  .titulo1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .parrafoIndex {
+    text-align: center;
+    font-size: 1.5rem;
+  }
+  
+  .index {
+    gap: 1rem;
+    display: grid;
+    grid-template-columns: auto auto;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 15%;
+  }
+  
+  .tarjeta {
+    background-color: transparent;
+    border-radius: 2%;
+    border: 1px solid #fefefe;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    padding: 5px;
+    transition: transform 0.3s ease;
+  }
+  
+  .tarjeta:hover {
+    transform: scale(1.1);
+  }
+  
+  .tarjeta img {
+    max-width: 50%;
+  }
+  
+  h2 {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+  
+  p {
+    font-size: 0.8rem;
+    margin-top: 10px;
+  }
+  
+  .textoFinal {
+    display: flexbox;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-bottom: 10%;
+  }
+  
+  .pUltimo {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  /*----------------FIN INICIO*/
+
+  /*-----------------NOSOTROS*/
+
+  #div-nosotros {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    gap: 2rem;
+  }
+  
+  #div-nosotros h1 {
+    text-align: center;
+  }
+  
+  #div-nosotros p {
+    text-align: center;
+    font-size: 1.1rem;
+  }
+  
+  #ultimo-parrafo {
+    margin-bottom: 2rem;
+  }
+
+  /*------------------FIN NOSOTROS*/
+
+  /*--------------------CONSULTA*/
+
+  .main-consulta {
+    display: grid;
+    grid-template-columns: auto;
+    height: 100vh;
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+  
+  .divForm {
+    background-color: transparent;
+  }
+  
+  .form11 {
+    display: grid;
+    grid-template-columns: auto;  
+    margin-top: 20%;
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+
+  /*--------------------FIN CONSULTA*/
+
+  /*--------------------CONSULTA PHP*/
+
+  .main-consulta-php {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: max-content;
+    bottom: 0;
+  }
+  
+  table {
+    border-collapse: collapse;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 5%;
+  }
+  
+  table, th, td {
+    border: 2px solid #fefefe;
+    padding: 0;
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 1rem;
+  }
+  
+  h3 {
+    margin-top: 5% ;
+    text-align: center;
+  }
+
+  /*--------------------FIN CONSULTA PHP*/
+
+  /*--------------------CONTACTO*/
+
+  #mainn {
+    display: grid;
+    grid-template-columns: auto;
+    column-gap: 5%;
+    height: max-content;
+    margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
+    color: #fefefe;
+  }
+  
+  .formm {
+    margin-top: 3.5rem;
+    margin-bottom: 3.5rem;
+    
+  }
+  
+  .contact-form {
+    background-color: transparent;
+  }
+  
+  .contact-form h2 {
+    margin-top: 0;
+  }
+  
+  .contact-form label,
+  .contact-form input,
+  .contact-form textarea,
+  .contact-form button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    outline: none;
+  }
+  
+  #mensaje {
+    height: 12.5rem;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    color: #000;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  .contact-form button {
+    background-color: transparent;
+    color: #fefefe;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: 2px solid #fefefe;
+    transition: 0.3s;
+    font-size: medium;
+    border-radius: 3px;
+  
+  }
+  
+  .contact-form button:hover {
+    background-color: transparent;
+    border-color: #080;
+    color:#080;
+    transform: translate(0px, -1px);
+    transition: 0.25s;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+  
+  .contact-form button:focus {
+    background-color: #fefefe;
+    color: #000;
+    transition: 0.25s;
+    border-color: #fefefe;
+  }
+  
+  
+  .contact-info {
+    height: max-content;
+  }
+  
+  #parrafo {
+    margin-top: 1rem;
+  }
+  
+  .mapa {
+    margin-top: 1rem;
+    width: 100%;
+    height: 21rem;
+    margin-bottom: 1rem;
+  }
+  
+  
+  .contact-info h2 {
+    margin-top: 0;
+  }
+
+  /*--------------------FIN CONTACTO*/
+}
+

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;600;900&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../css/style.css"/>
+    <link rel="icon" type="image/png" href="../assets/img/clinet1.png">
+    <title>Contacto</title>
+  </head>
+  <body>
+    <header class="header">
+      <nav class="nav container" id="nav">
+        <a href="../index.html"><img src="../assets/img/clinet1.png" alt="Logo Clinet" class="nav_logo"></a>
+
+        <ul class="nav_list">
+          <li class="nav_item"><a href="../index.html" class="nav_link">Inicio</a></li>
+          <li class="nav_item"><a href="../pages/nosotros.html" class="nav_link">Nosotros</a></li>
+          <li class="nav_item"><a href="../pages/consulta.html" class="nav_link">Consultar Turnos</a></li>
+          <li class="nav_item"><a href="../pages/contacto.html" class="nav_link">Contacto</a></li>
+        </ul>
+        <a href="#nav" class="nav_hamburguesa">
+          <img src="../assets/menu.svg" alt="" class="nav_icon" />
+        </a>
+        <a href="#" class="nav_cruz">
+          <img src="../assets/close.svg" alt="" class="nav_icon" />
+        </a>
+      </nav>
+    </header>
+    <main id="mainn">
+        <section class="contact-form">
+            <h2>Formulario de Contacto</h2>
+            <form action="https://formsubmit.co/clinetinst@gmail.com" method="post" class="formm">
+              <label for="Nombre">Nombre:</label>
+                <input type="text" id="nombre" name="Nombre" required>
+                <label for="Email">Correo Electrónico:</label>
+                <input type="email" id="email" name="Email" required>
+                <label for="Mensaje">Mensaje:</label>
+                <textarea id="mensaje" name="Mensaje" rows="4" required></textarea>
+                <button type="submit" class="button1">Enviar</button>
+                <input type="hidden" name="_next" value="https://fabrigullino.github.io/paginaEscuela/pages/contacto.html">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="box">
+
+            </form>
+        </section>
+        <section class="contact-info">
+            <h2>Información de Contacto</h2>
+            <p id="parrafo">Clínica Especializada San Nicolas</p>
+            <p id="parrafo">Dirección: Moreno 401, San Nicolas De Los Arroyos</p>
+            <p id="parrafo">Teléfono: +54 9 336 400-1423</p>
+            <p id="parrafo">Correo Electrónico: clinetinst@gmail.com</p>
+            <iframe class="mapa" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d589.2912827764684!2d-60.23102101059072!3d-33.33097287724827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95b767ead318cc73%3A0xff2a5a5213ea4732!2sInstituto%20Privado%20Fray%20Luis%20Beltran!5e0!3m2!1ses!2sar!4v1693911463683!5m2!1ses!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>        </section>
+    </main>
+    <footer class="footer">
+      <ul class="menu">
+        <li class="menu__item"><a class="menu__link" href="../index.html">Inicio</a></li>
+        <li class="menu__item"><a class="menu__link" href="../pages/nosotros.html">Nosotros</a></li>
+        <li class="menu__item"><a class="menu__link" href="../pages/consulta.html">Consultas</a></li>
+        <li class="menu__item"><a class="menu__link" href="../pages/contacto.html">Contacto</a></li>
+      </ul>
+      <p>&copy;2023 Clinet | Todos los derechos reservados</p>
+    </footer>
+    <script src="../js/script.js"></script>
+  </body>
+</html>
